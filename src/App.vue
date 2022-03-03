@@ -41,11 +41,11 @@
                     </v-list-item-icon>
                     <v-list-item-title>Starred</v-list-item-title>
                 </v-list-item>
-                <v-list-item link to="/templateBuilder">
+                <v-list-item link to="/templates">
                     <v-list-item-icon>
                         <v-icon>mdi-file-document</v-icon>
                     </v-list-item-icon>
-                    <v-list-item-title>Template builder</v-list-item-title>
+                    <v-list-item-title>Templates</v-list-item-title>
                 </v-list-item>
             </v-list>
         </v-navigation-drawer>
@@ -85,7 +85,7 @@ export default {
 
     computed:{
         isPageTemplateBuilder(){
-            return this.$route.fullPath == "/templateBuilder";
+            return this.$route.fullPath == '/templates/createTemplate';
         }
     }
 };
