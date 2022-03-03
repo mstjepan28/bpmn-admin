@@ -5,6 +5,8 @@ import SearchInstances from '../views/SearchInstances.vue';
 import ProcessInstance from '../views/ProcessInstance.vue';
 import Models from '../views/Models.vue';
 
+import templateBuilder from '../views/templateBuilder.vue';
+
 Vue.use(VueRouter);
 
 const routes = [
@@ -28,6 +30,11 @@ const routes = [
         path: '/instances',
         name: 'instances',
         component: SearchInstances,
+    },
+    {
+        path: '/templateBuilder',
+        name: 'templateBuilder',
+        component: templateBuilder,
     },
 ];
 

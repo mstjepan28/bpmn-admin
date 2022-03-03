@@ -1,0 +1,80 @@
+@import "./variables.scss";
+@import "./mixins.scss";
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+label, input[type=checkbox], input[type=radio]{
+    cursor: pointer;
+}
+
+button{
+    cursor: pointer;
+}
+
+input, input:hover, input:focus,
+textarea, textarea:hover, textarea:focus{
+    border: none;
+    outline: none;
+}
+
+.primaryButton{
+    @include button();
+}
+
+.textInput{
+    width: 100%;
+
+    padding: 0.5rem 0.25rem;
+
+    border-top: none;
+    border-right: none;
+    border-left: none;
+    border-bottom: 2px solid $highlightColor;
+
+    background: $primaryColor;
+    
+    &:hover, &:focus{
+        background: $secondaryColor;
+        border-bottom: 2px solid $highlightColor;
+        
+        &::placeholder{
+            color: $highlightColor
+        }
+    }
+
+    &::placeholder{
+        font-weight: bold;
+        color: $highlightColor
+    }
+}
+
+.paragraphInput{
+    width: 100%;
+    min-height: 10rem;
+    resize: none;
+    
+    padding: 0.5rem 0.25rem;
+
+    border: 2px solid $highlightColor;
+    background: $primaryColor;
+
+    &:hover, &:focus{
+        background: $secondaryColor;
+        border: 2px solid $highlightColor;
+        
+        &::placeholder{
+            color: $highlightColor
+        }
+    }
+
+    &::placeholder{
+        font-weight: bold;
+        color: $highlightColor
+    }
+}
+
+
