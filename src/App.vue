@@ -85,7 +85,8 @@ export default {
 
     computed:{
         isPageTemplateBuilder(){
-            return this.$route.fullPath == '/templates/createTemplate';
+            const route = this.$route.name;
+            return route == "createTemplate" || route == "editTemplate";
         }
     }
 };

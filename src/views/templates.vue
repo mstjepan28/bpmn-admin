@@ -3,10 +3,10 @@
         <div class="heading">
             <h1>PDF Templates</h1>
             <h2>
-                <router-link class="createTemplateLink" to="/templates/createTemplate">Create new template</router-link>
+                <router-link class="createTemplateLink" to="/templates/create">Create new template</router-link>
             </h2>
         </div>
-        <v-simple-table v-if="templateList.length >= 1 && false">
+        <v-simple-table v-if="templateList.length >= 1">
                 <thead>
                     <tr>
                         <th class="text-left">Template name</th>
@@ -41,7 +41,7 @@
         <v-simple-table v-else class="noTemplates">
             <h2>No templates</h2>
             <h2>
-                <router-link class="createTemplateLink" to="/templates/createTemplate">Create new template</router-link>
+                <router-link class="createTemplateLink" to="/templates/create">Create new template</router-link>
             </h2>
         </v-simple-table>
     </div>
@@ -149,7 +149,7 @@ export default {
     },
     methods: {
         editTemplate(templateId){
-            console.log(templateId);
+            this.$router.push(`/templates/edit/${templateId}`)
         },
 
         selectToDelete(templateId){

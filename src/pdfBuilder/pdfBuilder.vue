@@ -80,6 +80,10 @@ export default {
         apiUrl: {
             type: String,
             required: true
+        },
+        templateInstructions: {
+            type: Array,
+            required: false
         }
     },
     components: { ElementList, EditElement, ConvertPdfBtn, PdfToImage, ResponsePopup },
@@ -305,7 +309,7 @@ export default {
 
             this.readjustPosition(selection, positionData);
 
-            this.selectionList.push({
+            const newElement = {
                 id: Date.now() + "" + Math.ceil(Math.random() * 1000),
                 name: "Selection #" + this.selectionList.length,
                 elementRef: selection,
@@ -317,10 +321,12 @@ export default {
                 staticContent: "",
 
                 internalComponent: null,
-            })
+            }
 
-            const element = this.getElementFromList(selection);
-            this.elementSelected(element);
+            this.selectionList.push(newElement)
+            this.elementSelected(newElement);
+
+            return newElement;
         },
 
         // element - html element
@@ -508,9 +514,38 @@ export default {
             this.$refs.responsePopup.openPopup();
         },
         
+        calcPositionData(positionData){
+            const pdfTemplate = document.querySelector("div.pdfTemplate")
+            const width = pdfTemplate.offsetWidth;
+            const height = pdfTemplate.offsetHeight;
+
+            return{
+                x: Math.floor(positionData.x * width),
+                y: Math.floor(positionData.y * height), 
+                width: Math.floor(positionData.width * width), 
+                height: Math.floor(positionData.height * height), 
+            }
+        },
+
+        buildTemplate(){
+            for(let instruction of this.templateInstructions){
+                // Don't remove the setTimeout because everything breaks
+                setTimeout(() => {
+                    const calculatedPositionData = this.calcPositionData(instruction.positionData);
+                    const selection = this.createSelection(calculatedPositionData);
+
+                    selection.style.pointerEvents = "auto";
+    
+                    this.saveNewSelection(selection, calculatedPositionData);
+                }, 0)
+            }
+        }
     },
     mounted(){
         this.interaction();
+
+        if(this.templateInstructions) this.buildTemplate();
+
         document.addEventListener('keydown', this.keyboardSupport);
         document.getElementById("pdfTemplate").addEventListener("click", this.selectElementOnClick)
     },

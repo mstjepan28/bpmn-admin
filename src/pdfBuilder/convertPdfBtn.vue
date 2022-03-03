@@ -50,7 +50,7 @@ export default {
 
             const selectionList = this.filterList();
 
-            console.log(this.pdfDimensions)
+            console.log(selectionList)
 
             const pdfDimensions = this.pdfDimensions || {width: 596, height: 842}
 

@@ -5,8 +5,9 @@ import SearchInstances from '../views/SearchInstances.vue';
 import ProcessInstance from '../views/ProcessInstance.vue';
 import Models from '../views/Models.vue';
 
-import templateBuilder from '../views/templateBuilder.vue';
 import templates from '../views/templates.vue';
+import templatesCreate from '../views/createTemplate.vue';
+import templatesEdit from '../views/editTemplate.vue';
 
 Vue.use(VueRouter);
 
@@ -33,15 +34,21 @@ const routes = [
         component: SearchInstances,
     },
     {
-        path: '/templates/createTemplate',
-        name: '/templates/createTemplate',
-        component: templateBuilder,
-    },
-    {
         path: '/templates',
         name: 'templates',
         component: templates,
     },
+    {
+        path: '/templates/create',
+        name: 'createTemplate',
+        component: templatesCreate,
+    },
+    {
+        path: '/templates/edit/:templateId',
+        name: 'editTemplate',
+        component: templatesEdit,
+    },
+
 ];
 
 const router = new VueRouter({
