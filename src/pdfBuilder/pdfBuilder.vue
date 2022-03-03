@@ -6,7 +6,7 @@
 
         <div class="elementsCol">
             <div class="colContent">            
-                <button class="primaryButton" @click="drawSelection()" :class="{activeDrawing: drawHandler}">
+                <button class="primaryButton" @click="drawSelection()" :class="{activeDrawing: selectionCreation.drawHandler}">
                     {{drawButtonText}}
                 </button>
                 
@@ -85,7 +85,10 @@ export default {
     components: { ElementList, EditElement, ConvertPdfBtn, PdfToImage, ResponsePopup },
     data(){
         return{
-            drawHandler: null,
+            selectionCreation: {
+                drawHandler: null,
+                selection: null,
+            },
 
             selectedElement: null,
             selectionList: [],
@@ -96,7 +99,7 @@ export default {
     },
     computed:{
         drawButtonText(){
-            return this.drawHandler? "Disable drawing": "Enable drawing"
+            return this.selectionCreation.drawHandler? "Disable drawing": "Enable drawing"
         }
     },
     methods:{
@@ -193,48 +196,57 @@ export default {
         disableDrawing(){
             const pdfTemplate = document.getElementById("pdfTemplate");
 
-            pdfTemplate.removeEventListener("click", this.drawHandler);
+            if(this.selectionCreation.selection)
+                this.selectionCreation.selection.remove();
+
+            pdfTemplate.removeEventListener("click", this.selectionCreation.drawHandler);
+            pdfTemplate.removeEventListener("mousemove", this.selectionCreation.updateHandler);
             pdfTemplate.style.cursor = "";
             
             this.togglePointerEvents(pdfTemplate, true);
-            this.drawHandler = null;
+            
+            this.selectionCreation.drawHandler = null;
+            this.selectionCreation.updateHandler = null;
+            this.selectionCreation.selection = null;
         },
 
         drawSelection(){
-            if(this.drawHandler) return this.disableDrawing();
+            if(this.selectionCreation.drawHandler) return this.disableDrawing();
 
+            let drawingStarted = false;
             let positionData = { x: 0, y: 0, width: 0, height: 0 };
             
-            let selection = null;
-            let drawingStarted = false;
+            this.selectionCreation.selection = null;
 
             const thisRef = this;
             const pdfTemplate = document.getElementById("pdfTemplate");
 
             /* ------------------------------------------------------------ */
 
-            function updateSelectionPosition(event){
+            this.selectionCreation.updateHandler = function (event){
                 let width  = event.offsetX - positionData.x
                 let height = event.offsetY - positionData.y
                 
-                selection.style.left = width < 0? `${width}px` : "";
-                selection.style.top = height < 0? `${height}px`: "";
+                thisRef.selectionCreation.selection.style.left = width < 0? `${width}px` : "";
+                thisRef.selectionCreation.selection.style.top = height < 0? `${height}px`: "";
 
                 positionData.width = Math.abs(width);
                 positionData.height = Math.abs(height);
                 
-                selection.style.width  = `${positionData.width}px`;
-                selection.style.height = `${positionData.height}px`;
+                thisRef.selectionCreation.selection.style.width  = `${positionData.width}px`;
+                thisRef.selectionCreation.selection.style.height = `${positionData.height}px`;
             }
 
-            this.drawHandler = function (event){
+            this.selectionCreation.drawHandler = function (event){
                 if(drawingStarted){
                     drawingStarted = false;
 
-                    thisRef.saveNewSelection(selection, positionData);
+                    thisRef.saveNewSelection(thisRef.selectionCreation.selection, positionData);
+                    thisRef.selectionCreation.selection = null;
+
                     positionData = { x: 0, y: 0, width: 0, height: 0 };
 
-                    pdfTemplate.removeEventListener("mousemove", updateSelectionPosition);
+                    pdfTemplate.removeEventListener("mousemove", thisRef.selectionCreation.updateHandler);
                 }
                 else{
                     drawingStarted = true;
@@ -242,9 +254,9 @@ export default {
                     positionData.x = event.offsetX;
                     positionData.y = event.offsetY;
 
-                    selection = thisRef.createSelection(positionData);
+                    thisRef.selectionCreation.selection = thisRef.createSelection(positionData);
     
-                    pdfTemplate.addEventListener('mousemove',  updateSelectionPosition);
+                    pdfTemplate.addEventListener('mousemove', thisRef.selectionCreation.updateHandler);
                 }
             }
             
@@ -253,7 +265,7 @@ export default {
             this.togglePointerEvents(pdfTemplate, false);
             pdfTemplate.style.cursor = "crosshair";
 
-            pdfTemplate.addEventListener("click", this.drawHandler)
+            pdfTemplate.addEventListener("click", this.selectionCreation.drawHandler)
 
             /* ------------------------------------------------------------ */
         },
@@ -358,7 +370,7 @@ export default {
         // click on event handler, if clicked on a selection, open selection in editor, else empty 
         //  selection from editor
         selectElementOnClick(event){
-            if(this.drawHandler) return;
+            if(this.selectionCreation.drawHandler) return;
             let element = event.target
             
             if(element.classList.contains("internalComponent")) element = element.parentNode

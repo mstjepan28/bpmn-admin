@@ -41,6 +41,12 @@
                     </v-list-item-icon>
                     <v-list-item-title>Starred</v-list-item-title>
                 </v-list-item>
+                <v-list-item link to="/templateBuilder">
+                    <v-list-item-icon>
+                        <v-icon>mdi-file-document</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-title>Template builder</v-list-item-title>
+                </v-list-item>
             </v-list>
         </v-navigation-drawer>
 
@@ -53,7 +59,7 @@
         </v-app-bar> -->
 
         <!-- Sizes your content based upon application components -->
-        <v-main>
+        <v-main :class="{templateBuilderContainer: isPageTemplateBuilder}">
             <!-- Provides the application the proper gutter -->
             <v-container fluid>
                 <!-- If using vue-router -->
@@ -76,6 +82,12 @@ export default {
     data: () => ({
         //
     }),
+
+    computed:{
+        isPageTemplateBuilder(){
+            return this.$route.fullPath == "/templateBuilder";
+        }
+    }
 };
 </script>
 <style lang="scss">
@@ -91,4 +103,19 @@ export default {
         fill: yellow !important; /* color elements as green */
     }
 }
+
+main.templateBuilderContainer{
+    .v-main__wrap{
+        display: flex;
+        align-items: stretch;
+
+        .container{
+            display: flex;
+            align-items: stretch;
+
+            padding: 0;
+        }
+    }
+}
+
 </style>
