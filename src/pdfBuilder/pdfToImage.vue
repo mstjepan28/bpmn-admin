@@ -42,6 +42,10 @@ export default {
             type: String,
             required: true
         },
+        templateId: {
+            type: String,
+            required: true
+        },
     },
     components:{ LoadingIndicator },
     data(){
@@ -98,10 +102,12 @@ export default {
             if(!this.pdfSource || this.isConverting) return;
             this.isConverting = true;
 
-            const pdfBlob = new Blob([ this.pdfSource ], { type : 'application/pdf'})
+            const pdfBlob = new Blob([ this.pdfSource ], { type : 'application/pdf'});
+            const templateInfo = new Blob([ JSON.stringify({id: this.templateId}) ], { type: "application/json" });
 
             const data = new FormData();
             data.append("pdfTemplate", pdfBlob, "pdfTemplate.pdf")
+            data.append("templateInfo", templateInfo, "templateInfo")
 
             const config = { header : {'Content-Type': `multipart/form-data; boundary=${data._boundary}`,} }
             let imageSize = {}
@@ -111,8 +117,8 @@ export default {
             try{
                 const response = await axios.post(`${this.apiUrl}/convertPdfToImg`, data, config );
                 const pdfTemplate = document.getElementById("pdfTemplate");
-                
-                pdfTemplate.style.backgroundImage = `url(${response.data.attachment_url})`;
+
+                pdfTemplate.style.backgroundImage = `url(${response.data.attachment_url}?dummy=${Math.random()})`; // '?dummy' to prevent img caching
 
                 imageSize = this.getImageSize(response.data.attachment_url);
                 
@@ -138,8 +144,6 @@ export default {
                 imageSize.width = this.width;
                 imageSize.height = this.height;
             }
-
-            console.log(imageSize)
 
             return imageSize;
         },

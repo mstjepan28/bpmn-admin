@@ -19,7 +19,9 @@
                 />
 
                 <PdfToImage 
-                    :apiUrl="apiUrl" 
+                    v-if="templateId"
+                    :apiUrl="apiUrl"
+                    :templateId="templateId"
                     @pdfUploaded="setPdfTemplate"
                 />
 
@@ -73,7 +75,8 @@ import ConvertPdfBtn from "./convertPdfBtn.vue"
 import PdfToImage    from "./pdfToImage.vue";
 import ResponsePopup from "./responsePopup.vue";
 
-import interact      from "interactjs";
+import interact from "interactjs";
+import axios from "axios";
 
 export default {
     props:{
@@ -81,14 +84,16 @@ export default {
             type: String,
             required: true
         },
-        templateInstructions: {
-            type: Array,
+        templateInfo: {
+            type: Object,
             required: false
         }
     },
     components: { ElementList, EditElement, ConvertPdfBtn, PdfToImage, ResponsePopup },
     data(){
         return{
+            templateId: null,
+
             selectionCreation: {
                 drawHandler: null,
                 selection: null,
@@ -527,24 +532,49 @@ export default {
             }
         },
 
+        // if a template is getting edited, the original template has to be built first based on its instructions
+        // instructions are a JSON object that describes selections of the template
         buildTemplate(){
-            for(let instruction of this.templateInstructions){
+            for(let instruction of this.templateInfo.instructionList){
                 // Don't remove the setTimeout because everything breaks
                 setTimeout(() => {
                     const calculatedPositionData = this.calcPositionData(instruction.positionData);
-                    const selection = this.createSelection(calculatedPositionData);
 
-                    selection.style.pointerEvents = "auto";
+                    const selectionDom = this.createSelection(calculatedPositionData);
+                    selectionDom.style.pointerEvents = "auto";
     
-                    this.saveNewSelection(selection, calculatedPositionData);
+                    const selection = this.saveNewSelection(selectionDom, calculatedPositionData);
+
+                    selection.isStatic = instruction.staticContent;
+                    selection.type = instruction.type;
+                    selection.variable = instruction.variable;
                 }, 0)
+            }
+
+            this.templateId = this.templateInfo.id;
+
+            const pdfTemplate = document.querySelector("div.pdfTemplate");
+            pdfTemplate.style.backgroundImage = `url(${this.apiUrl}/public/images/${this.templateInfo.id}.png?dummy=${Math.random()})`;
+        },
+
+        async getUUID(){
+            
+            try{
+                const response = await axios.get(`${this.apiUrl}/generateUUID`);
+                this.templateId = response.data.id;
+            }catch(error){
+                const status = error.message == "Network Error"? 408: 500;
+                this.openResponsePopup(status);
             }
         }
     },
-    mounted(){
+    async mounted(){
         this.interaction();
 
-        if(this.templateInstructions) this.buildTemplate();
+        if(this.templateInfo) 
+            this.buildTemplate();
+        else
+            await this.getUUID(); 
 
         document.addEventListener('keydown', this.keyboardSupport);
         document.getElementById("pdfTemplate").addEventListener("click", this.selectElementOnClick)

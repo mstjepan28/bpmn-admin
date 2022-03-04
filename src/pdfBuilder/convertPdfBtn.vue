@@ -49,9 +49,6 @@ export default {
             this.isProcessing = true;
 
             const selectionList = this.filterList();
-
-            console.log(selectionList)
-
             const pdfDimensions = this.pdfDimensions || {width: 596, height: 842}
 
             const blobPdfDimensions = new Blob([ JSON.stringify(pdfDimensions) ], { type: "application/json" });
