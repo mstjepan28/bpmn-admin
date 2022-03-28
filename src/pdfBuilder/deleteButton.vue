@@ -52,12 +52,12 @@ export default {
 
 <style lang="scss" scoped>
 @import "./styles/style.scss";
+$buttonColor: $redHighlight;
 
 button, button:hover, button:focus{
     outline: none;
     border: none;
 }
-
 .deleteContainer{
     @include flex(row, space-between, center);
     width: 100%;
@@ -65,15 +65,14 @@ button, button:hover, button:focus{
     padding: 0.5rem 0;
     position: relative;
 
-    border: 2px solid $redHighlight;
     border-radius: 8px;
     background: $primaryColor;
 
-    &>.deleteButton{
+    .deleteButton{
         @include flex(row, center, center);
         width: 100%;
 
-        font-size: 20px;
+        font-size: 16px;
         font-weight: bold;
         color: $primaryColor;
 
@@ -81,13 +80,14 @@ button, button:hover, button:focus{
 
         position: absolute;
         top: 0;
-        bottom: 0;
         left: 0;
+        bottom: 0;
+        right: 0;
 
         transition: 0.4s ease-in-out;
 
-        border-radius: 6px;
-        background: red;
+        border-radius: 8px;
+        background: $buttonColor;
     }
 
     .choiceButtons{
@@ -96,7 +96,7 @@ button, button:hover, button:focus{
         width: 40%;
         margin-left: auto;
 
-        & > button{
+        button{
             @include flex(row, center, center);
             width: 100%;
 
@@ -104,8 +104,8 @@ button, button:hover, button:focus{
 
             background: none;
 
-            &>img{
-                $buttonSize: 1.75rem;
+            img{
+                $buttonSize: 1.5rem;
                 width: $buttonSize;
                 height: $buttonSize;
             }

@@ -1,5 +1,5 @@
 <template>
-    <button class="primaryButton" :class="{progress: isProcessing}" @click="postPDFTemplate()" :disabled="isProcessing"> 
+    <button class="primaryButton convertButton" :class="{progress: isProcessing}" @click="postPDFTemplate()" :disabled="isProcessing"> 
         <div v-if="isProcessing" class="progress">
             <LoadingIndicator 
                 id="convertingIndicator" 
@@ -48,7 +48,7 @@ export default {
             if(this.isProcessing) return;
             this.isProcessing = true;
 
-            const selectionList = this.filterList();
+            const selectionList = this.filterList(); 
             const pdfDimensions = this.pdfDimensions || {width: 596, height: 842}
 
             const blobPdfDimensions = new Blob([ JSON.stringify(pdfDimensions) ], { type: "application/json" });
@@ -126,7 +126,7 @@ export default {
 <style lang="scss">
 @import "./styles/style.scss";
 
-.primaryButton{
+.convertButton{
     min-height: 45px;
     max-height: 45px;
 }

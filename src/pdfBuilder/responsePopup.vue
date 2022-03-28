@@ -104,12 +104,12 @@ $slideDownDistance: 20px;
 $animationDuration: 0.4s;
 
 .success{
-    border: 2px solid $greenHighlight;
+    border: 1px solid $greenHighlight;
     background: $greenHighlight;
 }
 
 .fail{
-    border: 2px solid $redHighlight;
+    border: 1px solid $redHighlight;
     background: $redHighlight;
 }
 

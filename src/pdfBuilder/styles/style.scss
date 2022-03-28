@@ -21,6 +21,13 @@ textarea, textarea:hover, textarea:focus{
     outline: none;
 }
 
+h2 {
+    font-size: 20px;
+}
+h3 {
+    font-size: 16px;
+}
+
 .primaryButton{
     @include button();
 }
@@ -28,43 +35,45 @@ textarea, textarea:hover, textarea:focus{
 .textInput{
     width: 100%;
 
-    padding: 0.5rem 0.25rem;
+    padding: 0.25rem;
+    font-size: 12px;
 
     border-top: none;
     border-right: none;
     border-left: none;
-    border-bottom: 2px solid $highlightColor;
+    border-bottom: 1px solid $highlightColor;
 
     background: $primaryColor;
     
     &:hover, &:focus{
         background: $secondaryColor;
-        border-bottom: 2px solid $highlightColor;
+        border-bottom: 1px solid $highlightColor;
         
-        &::placeholder{
+        &::placeholder{ 
             color: $highlightColor
         }
     }
 
     &::placeholder{
-        font-weight: bold;
         color: $highlightColor
     }
 }
 
 .paragraphInput{
     width: 100%;
-    min-height: 10rem;
+    min-height: 5rem;
     resize: none;
-    
-    padding: 0.5rem 0.25rem;
 
-    border: 2px solid $highlightColor;
+    font-size: 12px;
+    
+    padding: 0.25rem;
+
+    border: 1px solid $highlightColor;
     background: $primaryColor;
 
     &:hover, &:focus{
         background: $secondaryColor;
-        border: 2px solid $highlightColor;
+        border: 1px solid $highlightColor;
         
         &::placeholder{
             color: $highlightColor
@@ -72,7 +81,6 @@ textarea, textarea:hover, textarea:focus{
     }
 
     &::placeholder{
-        font-weight: bold;
         color: $highlightColor
     }
 }

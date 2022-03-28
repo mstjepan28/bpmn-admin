@@ -5,7 +5,7 @@
     <div class="listWrapper">
         <ul v-if="elementList" class="list">
             <li :key="element.id" v-for="element in elementList">
-                <button class="primaryButton" :class="{active: element.id == activeElemId}" @click="selectElement(element)">
+                <button class="element" :class="{active: element.id == activeElemId}" @click="selectElement(element)">
                     {{element.name}}
                 </button>
             </li>
@@ -46,28 +46,28 @@ export default {
 
 .active{
     border: 1px solid $highlightColor !important;
-}
+    }
 
 .listWrapper{
-    max-height: 15rem;
+    max-height: 7rem;
     overflow-y: auto;
+
     .list{
         @include flex(column, center, initial);
         
-        row-gap: 0.5rem;
+        row-gap: 0.25rem;
         list-style-type: none;
     
-        margin-top: 1rem;
+        margin-top: 0.5rem;
     
         & > li{
-            @include flex(row, center, center);
+            @include flex(row, flex-start, center);
         }
     }
 }
 
-.primaryButton{
-    min-height: 2rem;
-    padding: 0.25rem 0;
+.element{
+    background: red;
 
     &.active{
         color: $primaryColor;

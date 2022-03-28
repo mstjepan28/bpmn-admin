@@ -1,12 +1,13 @@
 <template>
     <div>
         <div v-if="element">
-            <h2>Edit element</h2>
+            <h2>Element properties:</h2>
 
+            <!--
             <input type="text" class="textInput changeName" v-model="element.name">
+            -->
 
-            <h3>Position data</h3>
-
+            <h3 class="sectionTitle">Position data</h3>
             <div class="positionData">
                 <div class="elementX">                
                     <label for="positionDataX">X</label>
@@ -18,7 +19,7 @@
                     <input type="number" id="positionDataY" v-model="positionData.y">
                 </div>
 
-                <div class="ElementW">
+                <div class="elementW">
                     <label for="positionDataWidth">W</label>
                     <input type="number" id="positionDataWidth" v-model="positionData.width">
                 </div>
@@ -29,7 +30,7 @@
                 </div>
             </div>
 
-            <div class="toggleMovement">
+            <div class="toggleSwitchContainer">
                 <ToggleSwitch
                     class="toggleWrapper"
                     ref="movementToggle"
@@ -49,7 +50,7 @@
                 />
             </div>
 
-            <h2>Data type: </h2>
+            <h3 class="sectionTitle">Data type: </h3>
             <div class="dataTypeSelection">
                 <label for="elementText" class="primaryButton" :class="{activeType: elementType == 'singlelineText'}"> 
                     Text <input type="radio" id="elementText" name="elementType" value="singlelineText" v-model="elementType">
@@ -62,7 +63,7 @@
                 </label>
             </div>
 
-            <h2>Static content</h2>
+            <h3 class="sectionTitle">Static content</h3>
             <div v-if="element.isStatic">
                 <div v-if="element.type == 'singlelineText'" class="staticInput">
                     <h3><label for="singleLineTextInput">Input text: </label></h3>
@@ -92,7 +93,7 @@
         </div>
         
         <div v-else class="nothingSelected">
-            <h2>No element selected</h2>
+            <h2>No elements selected</h2>
         </div>
 
     </div>
@@ -377,22 +378,20 @@ export default {
 
 .activeType{
     color: $primaryColor;
+    border: none;
     background: $blueHighlight !important;
 }
 
-h2{
+.sectionTitle{
     margin-top: 1rem;
-}
-h3{
-    margin-top: 1rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.25rem;
 }
 
 .changeName{
-    font-size: 20px;
-    font-weight: bold;
+    font-size: 16px;
+    font-weight: 500;
 
-    padding: 1rem 0 0.25rem 0.25rem;
+    padding: 0 0 0 0.25rem;
 
     background-color: transparent;
 
@@ -408,7 +407,7 @@ h3{
     grid-template: repeat(2, 1fr);
     gap: 1rem;
 
-    padding: 1rem;
+    padding: 0.5rem;
     
     border-radius: 8px;
     background: $secondaryColor;
@@ -432,13 +431,15 @@ h3{
 
         font-weight: bold;
 
-        &>label{
+        label{
             width: 1.5rem;
+            font-size: 14px;
         }
 
-        &>input{
+        input{
             width: 100%;
 
+            font-size: 14px;
             font-weight: bold;
 
             outline: none;
@@ -459,13 +460,16 @@ h3{
 }
 
 .dataTypeSelection{
-    @include flex(row, space-around, center);
+    @include flex(row, space-between, initial);
     column-gap: 0.25rem;
     margin-top: 0.5rem;
 
-    &>label{
-        @include flex(column, center, center);
-        &>input{
+    label{
+        @include flex(row, center, center);
+        padding: 0;
+        padding: 0.25rem 0;
+
+        & > input{
             display: none !important;
         }
     }
@@ -491,7 +495,7 @@ h3{
 }
 
 .deleteButton{
-    margin-top: 2.5rem;
+    margin-top: 0.75rem;
 }
 
 .nothingSelected{
@@ -499,13 +503,13 @@ h3{
     width: 100%;
 
     padding: 6rem 0;
-    margin-top: 2rem;
 
     border-radius: 8px;
     background: $secondaryColor;
 
-    &>h2{
+    h2{
         margin: 0;
+        font-size: 16px;
     }
 }
 </style>

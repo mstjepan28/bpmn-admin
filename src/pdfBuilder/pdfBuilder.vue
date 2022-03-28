@@ -6,7 +6,7 @@
 
         <div class="elementsCol">
             <div class="colContent">            
-                <button class="primaryButton" @click="drawSelection()" :class="{activeDrawing: selectionCreation.drawHandler}">
+                <button class="primaryButton drawingToggleButton" @click="drawSelection()" :class="{activeDrawing: selectionCreation.drawHandler}">
                     {{drawButtonText}}
                 </button>
                 
@@ -50,11 +50,13 @@
             </div>
 
             <div class="colContent">
+                <!--
                 <ElementList 
                     title="Selection list: "
                     :elementList="selectionList"
                     @elementSelected="elementSelected"
                 />
+                -->
                 
                 <EditElement
                     ref="editElement"
@@ -405,7 +407,7 @@ export default {
                 this.selectedElement.elementRef.style.boxShadow = ""
             
             this.selectedElement = element;
-            this.selectedElement.elementRef.style.boxShadow = "inset 0px 0px 0px 2px #add8e6"
+            this.selectedElement.elementRef.style.boxShadow = "inset 0px 0px 0px 1px #add8e6"
 
             this.shiftFocus(element.elementRef)
         },
@@ -448,7 +450,7 @@ export default {
         },
 
         keyboardSupport(event){
-            const modifyBy = 10;
+            const modifyBy = 5;
 
             if(event.shiftKey){
                 switch(event.key){
@@ -599,8 +601,13 @@ export default {
 
     &:hover, &:focus{
         color: $primaryColor;
+        border: none;
         background: $blueHighlight;
     }
+}
+
+.drawingToggleButton{
+    min-height: 45px;
 }
 
 .componentContainer{
@@ -627,7 +634,6 @@ export default {
 
         position: relative;
 
-        //background-color: $primaryColor;
         background-position: center;
         background-repeat: no-repeat; 
         background-size: cover;
@@ -647,7 +653,6 @@ export default {
 
     .toggleColumn{
         @include flex(row, center, stretch);
-        width: 2.5rem;
         min-width: 2.5rem;
         
         &>button{

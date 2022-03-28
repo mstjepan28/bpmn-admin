@@ -147,6 +147,7 @@ $SwitchHeight: 20px;
 
 .switchLabel{
     color: $disabled;
+    font-weight: 500;
     margin-right: 1rem;
 }
 

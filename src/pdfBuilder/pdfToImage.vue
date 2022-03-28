@@ -179,7 +179,7 @@ export default {
     width: 100%;
     max-height: 10rem;
 
-    font-size: 20px;
+    font-size: 16px;
     font-weight: bold;
 
     padding: 4rem 0;
