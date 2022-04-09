@@ -7,22 +7,22 @@
             <div class="positionData">
                 <div class="elementX">                
                     <label for="positionDataX">X</label>
-                    <input type="number" id="positionDataX" v-model="positionData.x">
+                    <input type="number" id="positionDataX" @change="updateElementPosition" :value="positionData.x">
                 </div>
 
                 <div class="elementY">
                     <label for="positionDataY">Y</label>
-                    <input type="number" id="positionDataY" v-model="positionData.y">
+                    <input type="number" id="positionDataY" @change="updateElementPosition" :value="positionData.y">
                 </div>
 
                 <div class="elementW">
                     <label for="positionDataWidth">W</label>
-                    <input type="number" id="positionDataWidth" v-model="positionData.width">
+                    <input type="number" id="positionDataWidth" @change="updateElementPosition" :value="positionData.width">
                 </div>
 
                 <div class="elementH">
                     <label for="positionDataHeight">H</label>
-                    <input type="number" id="positionDataHeight" v-model="positionData.height">
+                    <input type="number" id="positionDataHeight" @change="updateElementPosition" :value="positionData.height">
                 </div>
             </div>
 
@@ -112,11 +112,17 @@ export default {
         element: {
             type: Object,
             required: false
+        },
+        minElementSize: {
+            type: Number,
+            required: true,
         }
     },
     components: { ImageUpload, ToggleSwitch, DeleteButton },
     data(){
         return{
+            pdfTemplate: null,
+
             isMovable: null,
             positionData: {},
             
@@ -135,24 +141,18 @@ export default {
         /* ------------------------------------------------------------ */
 
         xCordMax(){
-            const pdfTemplate = document.getElementById("pdfTemplate");
-            const xCordMax = pdfTemplate.offsetWidth - this.positionData.width || 0;
-
+            const xCordMax = this.pdfTemplate.offsetWidth - this.positionData.width || 0;
             return  xCordMax < 0? 0: xCordMax; 
         },
         yCordMax(){
-            const pdfTemplate = document.getElementById("pdfTemplate");
-            const yCordMax = pdfTemplate.offsetHeight - this.positionData.height || 0;
-
+            const yCordMax = this.pdfTemplate.offsetHeight - this.positionData.height || 0;
             return  yCordMax < 0? 0: yCordMax; 
         },
         widthDimMax(){
-            const pdfTemplate = document.getElementById("pdfTemplate");
-            return pdfTemplate.offsetWidth - this.positionData.x || 0;
+            return this.pdfTemplate.offsetWidth - this.positionData.x || 0;
         },
         heightDimMax(){
-            const pdfTemplate = document.getElementById("pdfTemplate");
-            return pdfTemplate.offsetHeight - this.positionData.y || 0;
+            return this.pdfTemplate.offsetHeight - this.positionData.y || 0;
         },
 
         /* ------------------------------------------------------------ */
@@ -218,42 +218,60 @@ export default {
 
         // ************************************************************ //
 
-        // Validate inputted position data. If its not valid set the value to the upper/lower bound.
-        validatePositionData(){
-            Object.keys(this.positionData).forEach(key => {
-                let value = parseInt(this.positionData[key])
-                value = value < 0? 0: value;
-                
-                this.positionData[key] = value;
-            });
-
-            const  clamp = (num, min, max) => Math.min(Math.max(num, min), max);
-            
-            this.positionData.x = clamp(this.positionData.x, 0, this.xCordMax);
-            this.positionData.y = clamp(this.positionData.y, 0, this.yCordMax);
-            this.positionData.width = clamp(this.positionData.width, 0, this.widthDimMax);
-            this.positionData.height = clamp(this.positionData.height, 0, this.heightDimMax);
-        },
-        
         modifyPositionData(modifyBy){
             if(!this.isMovable) return;
-            Object.keys(modifyBy).forEach(key => this.positionData[key] += modifyBy[key]);
+            
+            Object.keys(modifyBy).forEach(key => 
+                this.positionData[key] += modifyBy[key]
+            );
+
             this.validatePositionData();
+            this.applyPositionUpdate();
         },
 
-        // Update elements position based on the input values
-        updateElementPosition(){
-            if(!this.element || !this.element.positionData) return;
+        updatePositionData(target) {
+            const updatePositionValue = {
+                positionDataX: "x",
+                positionDataY: "y",
+                positionDataWidth: "width",
+                positionDataHeight: "height"
+            }
+            const posKey = updatePositionValue[target.id]; // get the key of the position value is being updated
+            this.positionData[posKey] = target.value; // update the value 
+        },
 
-            this.validatePositionData();
+        // Validate inputted position data. If its not valid set the value to the upper/lower bound.
+        validatePositionData(){
+            const  clamp = (num, min, max) => Math.min(Math.max(num, min), max);
+            let {x, y, width, height} = this.positionData;
+            
+            this.positionData.x = clamp(x, 0, this.xCordMax);
+            this.positionData.y = clamp(y, 0, this.yCordMax);
+            this.positionData.width = clamp(width, this.minElementSize, this.widthDimMax);
+            this.positionData.height = clamp(height, this.minElementSize, this.heightDimMax);
+        },
+
+        applyPositionUpdate() {
             const element = this.element.elementRef;
+            let {x, y, width, height} = this.positionData;
 
-            element.style.width = this.positionData.width + "px";
-            element.style.height = this.positionData.height + "px";
-            element.style.transform = 'translate(' + this.positionData.x + 'px,' + this.positionData.y + 'px)';
+            element.style.width = `${width}px`;
+            element.style.height = `${height}px`;
+            element.style.transform = `translate(${x}px, ${y}px)`;
         
-            element.dataset.x = this.positionData.x;
-            element.dataset.y = this.positionData.y;
+            element.dataset.x = x;
+            element.dataset.y = y;
+        },
+        
+        // Update elements position based on the input values
+        updateElementPosition({ target }){
+            if(!this.isMovable) return;
+
+            target.value = target.value == ""? "0": parseInt(target.value); // make sure the input is not empty 
+
+            this.updatePositionData(target);
+            this.validatePositionData();
+            this.applyPositionUpdate();
         },
 
         // ************************************************************ //
@@ -328,7 +346,8 @@ export default {
         },
     },
     async mounted(){
-        await this.getVariables()
+        this.pdfTemplate = document.getElementById("pdfTemplate");
+        await this.getVariables();
     },
     watch:{
         // When selected element gets changed, check its movable 
@@ -367,14 +386,6 @@ export default {
 
         staticContent(){
             this.updateStaticContent();
-        },
-
-        // Deep watcher for position values
-        positionData:{
-            handler(){
-                this.updateElementPosition()
-            },
-            deep: true
         }
     },
 }

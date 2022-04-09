@@ -48,7 +48,8 @@
                 <EditElement
                     ref="editElement"
                     :apiUrl="apiUrl" 
-                    :element="selectedElement" 
+                    :element="selectedElement"
+                    :minElementSize="minElementSize"
                     @deleteElement="updateList"
                     @openResponse="openResponsePopup"
                 />
@@ -81,6 +82,7 @@ export default {
     data(){
         return{
             templateId: null,
+            minElementSize: 15,
 
             selectionCreation: {
                 drawHandler: null,
@@ -113,8 +115,14 @@ export default {
                 edges: { left: true, right: true, bottom: true, top: true },
 
                 modifiers: [
-                    // Element cannot grow outside of the parent
-                    interact.modifiers.restrictEdges({ outer: 'parent' }),
+                    interact.modifiers.restrictEdges({
+                        outer: 'parent'
+                    }),
+
+                    // minimum size
+                    interact.modifiers.restrictSize({
+                        min: { width: this.minElementSize, height: this.minElementSize }
+                    })
                 ],
                 
                 listeners: {
@@ -149,8 +157,8 @@ export default {
             const target = event.target;
             
             // keep the dragged position in the data-x/data-y attributes
-            const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx
-            const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy
+            const x = (parseFloat(target.getAttribute('data-x')) || 0) + parseInt(event.dx)
+            const y = (parseFloat(target.getAttribute('data-y')) || 0) + parseInt(event.dy)
 
             // update position data of object
             this.updatePositionData(target, {x, y})
@@ -167,12 +175,12 @@ export default {
             if(target.classList.contains("pdfTemplate")) return;
 
             // Get the previous coordinates of the object
-            let x = (parseFloat(target.getAttribute('data-x')) || 0)
-            let y = (parseFloat(target.getAttribute('data-y')) || 0)
+            let x = (parseInt(target.getAttribute('data-x')) || 0)
+            let y = (parseInt(target.getAttribute('data-y')) || 0)
 
             // update the element's style
-            const width = event.rect.width;
-            const height = event.rect.height;
+            const width = parseInt(event.rect.width);
+            const height = parseInt(event.rect.height);
 
             this.updatePositionData(target, { width, height })
 
@@ -180,8 +188,8 @@ export default {
             target.style.height = height + 'px';
 
             // translate when resizing from top or left edges
-            x += event.deltaRect.left
-            y += event.deltaRect.top
+            x += parseInt(event.deltaRect.left)
+            y += parseInt(event.deltaRect.top)
 
             target.style.transform = `translate(${x}px, ${y}px)`
 
