@@ -3,10 +3,6 @@
         <div v-if="element">
             <h2>Element properties:</h2>
 
-            <!--
-            <input type="text" class="textInput changeName" v-model="element.name">
-            -->
-
             <h3 class="sectionTitle">Position data</h3>
             <div class="positionData">
                 <div class="elementX">                
@@ -304,7 +300,6 @@ export default {
         // Dynamically create an instance of the ImageUpload component and mount it as a child
         //  of the selected element
         elementTypeImage(){
-            console.log("trying to create component: ", this.shouldCreateComponent())
             if(!this.shouldCreateComponent()) return;
             
             const child = document.createElement("div");

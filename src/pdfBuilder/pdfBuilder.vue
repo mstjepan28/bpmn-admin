@@ -5,7 +5,7 @@
         />
 
         <div class="elementsCol">
-            <div class="colContent">            
+            <div class="colContent">
                 <button class="primaryButton drawingToggleButton" @click="drawSelection()" :class="{activeDrawing: selectionCreation.drawHandler}">
                     {{drawButtonText}}
                 </button>
@@ -24,11 +24,6 @@
                     :templateId="templateId"
                     @pdfUploaded="setPdfTemplate"
                 />
-
-                <!--
-                    <button class="primaryButton" @click="togglePopup()">Debug: Open popup</button>
-                -->
-
             </div>
 
             <div class="toggleColumn">
@@ -50,14 +45,6 @@
             </div>
 
             <div class="colContent">
-                <!--
-                <ElementList 
-                    title="Selection list: "
-                    :elementList="selectionList"
-                    @elementSelected="elementSelected"
-                />
-                -->
-                
                 <EditElement
                     ref="editElement"
                     :apiUrl="apiUrl" 
@@ -71,7 +58,6 @@
 </template>
 
 <script>
-import ElementList   from "./elementList.vue";
 import EditElement   from "./editElement.vue";
 import ConvertPdfBtn from "./convertPdfBtn.vue"
 import PdfToImage    from "./pdfToImage.vue";
@@ -91,7 +77,7 @@ export default {
             required: false
         }
     },
-    components: { ElementList, EditElement, ConvertPdfBtn, PdfToImage, ResponsePopup },
+    components: { EditElement, ConvertPdfBtn, PdfToImage, ResponsePopup },
     data(){
         return{
             templateId: null,
@@ -318,7 +304,6 @@ export default {
 
             const newElement = {
                 id: Date.now() + "" + Math.ceil(Math.random() * 1000),
-                name: "Selection #" + this.selectionList.length,
                 elementRef: selection,
                 positionData: positionData,
 
