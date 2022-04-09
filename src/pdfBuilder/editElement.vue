@@ -87,7 +87,7 @@
 
             <DeleteButton 
                 class="deleteButton"
-                :confirmBeforeDelete="true"
+                :confirmBeforeDelete="false"
                 @delete="deleteElement"
             />
         </div>
@@ -123,7 +123,7 @@ export default {
         return{
             isMovable: null,
             positionData: {},
-
+            
             staticContent: "",
             elementType: "",
 
@@ -262,10 +262,9 @@ export default {
 
         // ************************************************************ //
 
-        toggleStaticContent(newElement=null){
-            if(this.element.internalComponent) 
-                this.destroyComponent();
-            
+        // sets the state of the "Static content" switch
+        toggleStaticContent(newElement=null){            
+            // internal state of the toggle switch
             const internalState = this.$refs.staticToggle.toggleState
 
             if(this.element.isStatic == internalState) 
@@ -275,8 +274,8 @@ export default {
             else
                 this.element.isStatic = internalState;
 
-            if(this.elementType == "image" && this.element.isStatic) 
-                this.elementTypeImage();
+            this.destroyComponent();
+            this.elementTypeImage();
         },
 
         updateStaticContent(){
@@ -290,11 +289,24 @@ export default {
 
         // ************************************************************ //
 
+        shouldCreateComponent() {
+            return !this.element.internalComponent && // if there is a component present dont create another one
+            this.element.isStatic && // if its not static, there is not point in the component since the image is handled on the backend
+            this.elementType == "image"
+        },
+
+        shouldDestroyComponent() {
+            return this.element.internalComponent &&
+            !this.element.isStatic &&
+            this.elementType == "image"
+        },
+
         // Dynamically create an instance of the ImageUpload component and mount it as a child
         //  of the selected element
         elementTypeImage(){
-            if(!this.element.isStatic) return;
-
+            console.log("trying to create component: ", this.shouldCreateComponent())
+            if(!this.shouldCreateComponent()) return;
+            
             const child = document.createElement("div");
             this.element.elementRef.appendChild(child)
 
@@ -306,6 +318,8 @@ export default {
 
         // Destroy the internal component of the selected element and remove it from the DOM 
         destroyComponent(){
+            if(!this.shouldDestroyComponent()) return;
+
             document.getElementById(this.element.id).remove();
             
             this.element.internalComponent.$destroy();
@@ -327,14 +341,13 @@ export default {
             if(!this.element) return;
 
             this.newElementMounted = true;
-
-            this.staticContent = this.element.staticContent;
             this.elementType = this.element.type;
+            this.staticContent = this.element.staticContent;
             this.positionData = this.element.positionData;
 
-            setTimeout(() => {
+            setTimeout(() => { 
                 this.newElementMounted = false;
-                
+
                 this.checkIfMovable();
                 this.toggleStaticContent(true);
             }, 100)
@@ -342,18 +355,17 @@ export default {
 
         elementType(){
             if(!this.elementType || this.newElementMounted) return;
-            if(this.element.internalComponent) this.destroyComponent();
-
-            this.element.type = this.elementType;
+            if(this.elementType == "image") this.destroyComponent();
 
             this.staticContent = ""
+            this.element.type = this.elementType;
             this.element.elementRef.innerHTML = ""
 
             const elementTypeHandler = {
                 image: () => this.elementTypeImage(),
                 singlelineText: () => this.element.elementRef.style.wordBreak = "keep-all",
                 paragraph: () => this.element.elementRef.style.wordBreak = "break-all",
-                "": () => {},
+                "": () => {}, // fallback
             }
             elementTypeHandler[this.elementType]();
         },
