@@ -89,6 +89,7 @@ export default {
                 selection: null,
             },
 
+            elementToCopy: null,
             selectedElement: null,
             selectionList: [],
 
@@ -442,6 +443,22 @@ export default {
             this.$refs.editElement.modifyPositionData(modifyBy)
         },
 
+        copySelectedElement() {
+            if(!this.selectedElement) return;
+
+            this.elementToCopy = JSON.parse(JSON.stringify(this.selectedElement));
+            this.elementToCopy.elementRef = null;
+        },
+        
+        pasteSelectedElement() {
+            this.elementToCopy.positionData.x += 10;
+            this.elementToCopy.positionData.y += 10;
+
+            this.rebuildElement(this.elementToCopy);
+
+            console.log(this.selectedElement.elementRef)
+        },
+
         keyboardSupport(event){
             const modifyBy = 5;
 
@@ -460,27 +477,37 @@ export default {
                         this.modifyPositionData({x: 0, y: 0, width: modifyBy, height: 0});
                         break;
                 }
-
-                return;
+            }
+            else if(event.ctrlKey){
+                switch(event.key){
+                    case "c":
+                        this.copySelectedElement();
+                        break;
+                    case "v":
+                        this.pasteSelectedElement();
+                        break;
+                }
+            }
+            else{
+                switch(event.key){
+                    case "Escape":
+                        this.disableDrawing();
+                        break;
+                    case "ArrowUp":
+                        this.modifyPositionData({x: 0, y: -modifyBy, width: 0, height: 0});
+                        break;
+                    case "ArrowDown":
+                        this.modifyPositionData({x: 0, y: modifyBy, width: 0, height: 0});
+                        break;
+                    case "ArrowLeft":
+                        this.modifyPositionData({x: -modifyBy, y: 0, width: 0, height: 0});
+                        break;
+                    case "ArrowRight":
+                        this.modifyPositionData({x: modifyBy, y: 0, width: 0, height: 0});
+                        break;
+                }
             }
 
-            switch(event.key){
-                case "Escape":
-                    this.disableDrawing();
-                    break;
-                case "ArrowUp":
-                    this.modifyPositionData({x: 0, y: -modifyBy, width: 0, height: 0});
-                    break;
-                case "ArrowDown":
-                    this.modifyPositionData({x: 0, y: modifyBy, width: 0, height: 0});
-                    break;
-                case "ArrowLeft":
-                    this.modifyPositionData({x: -modifyBy, y: 0, width: 0, height: 0});
-                    break;
-                case "ArrowRight":
-                    this.modifyPositionData({x: modifyBy, y: 0, width: 0, height: 0});
-                    break;
-            }
         },
 
         toggleColumn(columnSelector){
@@ -527,23 +554,26 @@ export default {
             }
         },
 
+        rebuildElement(instructions, recalcPos) {
+            const calculatedPositionData = recalcPos? this.calcPositionData(instructions.positionData): instructions.positionData;
+
+            const selectionDom = this.createSelection(calculatedPositionData);
+            selectionDom.style.pointerEvents = "auto";
+            selectionDom.style.width = `${calculatedPositionData.width}px`
+            selectionDom.style.height = `${calculatedPositionData.height}px`
+
+            const selection = this.saveNewSelection(selectionDom, calculatedPositionData);
+
+            selection.isStatic = instructions.staticContent;
+            selection.type = instructions.type;
+            selection.variable = instructions.variable;
+        },
+
         // if a template is getting edited, the original template has to be built first based on its instructions
         // instructions are a JSON object that describes selections of the template
         buildTemplate(){
-            for(let instruction of this.templateInfo.instructionList){
-                // Don't remove the setTimeout because everything breaks
-                setTimeout(() => {
-                    const calculatedPositionData = this.calcPositionData(instruction.positionData);
-
-                    const selectionDom = this.createSelection(calculatedPositionData);
-                    selectionDom.style.pointerEvents = "auto";
-    
-                    const selection = this.saveNewSelection(selectionDom, calculatedPositionData);
-
-                    selection.isStatic = instruction.staticContent;
-                    selection.type = instruction.type;
-                    selection.variable = instruction.variable;
-                }, 0)
+            for(let instructions of this.templateInfo.instructionList){
+                this.rebuildElement(instructions, true)
             }
 
             this.templateId = this.templateInfo.id;
