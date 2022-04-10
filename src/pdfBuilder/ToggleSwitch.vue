@@ -1,5 +1,5 @@
 <template>
-    <button class="toggleSwitch" type="button"  @click="toggle()" :class="{activeBorder: toggleState}">
+    <button class="toggleSwitch toggleWrapper" type="button"  @click="toggle()" :class="{activeBorder: toggleState}">
         <h3 v-if="labels" class="switchLabel" :class="{activeColor: toggleState}">{{toggleLabel}}</h3>
 
         <div class="switch" :class="{activeBackground: toggleState}">
@@ -88,7 +88,14 @@ $SliderSize: 15px;
 $SwitchWidth: 36px;
 $SwitchHeight: 20px;
 
+.toggleWrapper{
+    @include flex(row, space-between, center);
+    width: 100%;
 
+    &:first-child{
+        margin: 0.5rem 0;
+    }
+}
 .activeBorder{
     &:hover, &:focus{
         border: 1.5px solid $active !important;

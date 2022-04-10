@@ -28,7 +28,6 @@
 
             <div class="toggleSwitchContainer">
                 <ToggleSwitch
-                    class="toggleWrapper"
                     ref="movementToggle"
                     :labels="['Movement enabled', 'Movement disabled']" 
                     :isDisabled="!isMovable" 
@@ -37,7 +36,6 @@
                 />
 
                 <ToggleSwitch
-                    class="toggleWrapper"
                     ref="staticToggle"
                     :labels="['Static content', 'Static content']" 
                     :isDisabled="!element.isStatic" 
@@ -76,8 +74,12 @@
             </div>
             <div v-else class="variableDropdown">
                 <h3><label for="variables">Choose a variable:</label></h3>
-                <select id="variables" v-model="element.variable">
-                    <option :key="variable.value" v-for="variable in templateVariables" :value="variable.value">{{variable.label}}</option>
+                <select id="variables" v-model="element.variable" @change="variableChange">
+                    <option 
+                        :key="variable.value"
+                        v-for="variable in templateVariables" 
+                        :value="variable.value"
+                    >{{variable.label}}</option>
                 </select>
             </div>
 
@@ -116,6 +118,10 @@ export default {
         minElementSize: {
             type: Number,
             required: true,
+        },
+        preview: {
+            type: Object,
+            required: false
         }
     },
     components: { ImageUpload, ToggleSwitch, DeleteButton },
@@ -129,12 +135,7 @@ export default {
             staticContent: "",
             elementType: "",
 
-            templateVariables: [
-                {label: "ID", value: "id"},
-                {label: "First name", value: "first_name"},
-                {label: "Last name", value: "last_name"},
-                {label: "Email", value: "email"}    
-            ],
+            templateVariables: [],
         }
     },
     computed:{
@@ -158,6 +159,13 @@ export default {
         /* ------------------------------------------------------------ */
     },
     methods:{
+        variableChange() {
+            if(!this.preview.enabled) return;
+
+            const value = this.preview.previewData[this.element.variable];
+            this.element.elementRef.innerText = value || "";
+        },
+
         async getVariables(){
             document.documentElement.style.cursor = "wait";
 
@@ -279,7 +287,10 @@ export default {
         // sets the state of the "Static content" switch
         toggleStaticContent(newElement=null){            
             // internal state of the toggle switch
-            const internalState = this.$refs.staticToggle.toggleState
+            const internalState = this.$refs.staticToggle.toggleState;
+
+            this.element.staticContent = "";
+            this.element.elementRef.innerText = "";
 
             if(this.element.isStatic == internalState) 
                 return
@@ -298,7 +309,7 @@ export default {
             if(this.elementType == "image") 
                 return this.element.internalComponent.setImageURL(this.staticContent);
 
-            this.element.elementRef.innerHTML = this.staticContent || "";
+            this.element.elementRef.innerText = this.staticContent || "";
         },
 
         // ************************************************************ //
@@ -373,7 +384,7 @@ export default {
 
             this.staticContent = ""
             this.element.type = this.elementType;
-            this.element.elementRef.innerHTML = ""
+            this.element.elementRef.innerText = ""
 
             const elementTypeHandler = {
                 image: () => this.elementTypeImage(),
@@ -467,16 +478,6 @@ export default {
         }
     }
 }
-
-.toggleWrapper{
-    @include flex(row, space-between, center);
-    width: 100%;
-
-    &:first-child{
-        margin: 0.5rem 0;
-    }
-}
-
 .dataTypeSelection{
     @include flex(row, space-between, initial);
     column-gap: 0.25rem;

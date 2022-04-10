@@ -24,6 +24,14 @@
                     :templateId="templateId"
                     @pdfUploaded="setPdfTemplate"
                 />
+
+                <ToggleSwitch
+                    ref="staticToggle"
+                    :labels="['Preview enabled', 'Preview disabled']" 
+                    :isDisabled="!showContentPreview" 
+                    :toggleID="'previewToggle'"
+                    @toggled="toggleContentPreview"
+                />
             </div>
 
             <div class="toggleColumn">
@@ -50,6 +58,10 @@
                     :apiUrl="apiUrl" 
                     :element="selectedElement"
                     :minElementSize="minElementSize"
+                    :preview="{
+                        previewData,
+                        enabled: showContentPreview
+                    }"
                     @deleteElement="updateList"
                     @openResponse="openResponsePopup"
                 />
@@ -63,6 +75,7 @@ import EditElement   from "./editElement.vue";
 import ConvertPdfBtn from "./convertPdfBtn.vue"
 import PdfToImage    from "./pdfToImage.vue";
 import ResponsePopup from "./responsePopup.vue";
+import ToggleSwitch from "./ToggleSwitch.vue";
 
 import interact from "interactjs";
 import axios from "axios";
@@ -78,11 +91,14 @@ export default {
             required: false
         }
     },
-    components: { EditElement, ConvertPdfBtn, PdfToImage, ResponsePopup },
+    components: { EditElement, ConvertPdfBtn, PdfToImage, ResponsePopup, ToggleSwitch },
     data(){
         return{
             templateId: null,
             minElementSize: 15,
+
+            previewData: null,
+            showContentPreview: false,
 
             selectionCreation: {
                 drawHandler: null,
@@ -455,8 +471,6 @@ export default {
             this.elementToCopy.positionData.y += 10;
 
             this.rebuildElement(this.elementToCopy);
-
-            console.log(this.selectedElement.elementRef)
         },
 
         keyboardSupport(event){
@@ -591,10 +605,43 @@ export default {
                 const status = error.message == "Network Error"? 408: 500;
                 this.openResponsePopup(status);
             }
+        },
+
+        async getPreviewData() {
+            try{
+                const response = await axios.get(`${this.apiUrl}/previewData`);
+                return response.data;
+            }catch(error){
+                const status = error.message == "Network Error"? 408: 500;
+                this.openResponsePopup(status);
+
+                return {};
+            }
+        },
+
+        setPreviewData(preview) {
+            for(let selection of this.selectionList){
+                if(selection.isStatic) continue; // don't display static content - it would overwrite user input 
+
+                const previewValue = preview[selection.variable] || "";
+
+                if(selection.type == 'image') continue; // TODO 
+
+                selection.elementRef.innerHTML = previewValue;
+                selection.staticContent = previewValue;
+            }
+        },
+
+        async toggleContentPreview() {
+            this.showContentPreview = !this.showContentPreview;
+
+            const preview = this.showContentPreview?  this.previewData: {};
+            this.setPreviewData(preview);
         }
     },
     async mounted(){
         this.interaction();
+        this.previewData = await this.getPreviewData();
 
         if(this.templateInfo) 
             this.buildTemplate();
