@@ -4,41 +4,33 @@
             ref="responsePopup"
         />
 
-        <div class="elementsCol">
-            <div class="colContent">
-                <button class="primaryButton drawingToggleButton" @click="drawSelection()" :class="{activeDrawing: selectionCreation.drawHandler}">
-                    {{drawButtonText}}
-                </button>
-                
-                <ConvertPdfBtn 
-                    :apiUrl="apiUrl" 
-                    :selectionList="selectionList" 
-                    :pdfTemplateBuffer="pdfTemplateBuffer" 
-                    :pdfDimensions="pdfDimensions"
-                    @openResponse="openResponsePopup"
-                />
+        <div class="colContent leftCol">
+            <button class="primaryButton drawingToggleButton" @click="drawSelection()" :class="{activeDrawing: selectionCreation.drawHandler}">
+                {{drawButtonText}}
+            </button>
+            
+            <ConvertPdfBtn 
+                :apiUrl="apiUrl" 
+                :selectionList="selectionList" 
+                :pdfTemplateBuffer="pdfTemplateBuffer" 
+                :pdfDimensions="pdfDimensions"
+                @openResponse="openResponsePopup"
+            />
 
-                <PdfToImage 
-                    v-if="templateId"
-                    :apiUrl="apiUrl"
-                    :templateId="templateId"
-                    @pdfUploaded="setPdfTemplate"
-                />
+            <PdfToImage 
+                v-if="templateId"
+                :apiUrl="apiUrl"
+                :templateId="templateId"
+                @pdfUploaded="setPdfTemplate"
+            />
 
-                <ToggleSwitch
-                    ref="staticToggle"
-                    :labels="['Preview enabled', 'Preview disabled']" 
-                    :isDisabled="!showContentPreview" 
-                    :toggleID="'previewToggle'"
-                    @toggled="toggleContentPreview"
-                />
-            </div>
-
-            <div class="toggleColumn">
-                <button @click="toggleColumn('elementsCol')"> 
-                    <img src="./svg/ChevronArrow.svg" alt="Chevron arrow" style="transform: rotate(90deg)"> 
-                </button>
-            </div>
+            <ToggleSwitch
+                ref="staticToggle"
+                :labels="['Preview enabled', 'Preview disabled']" 
+                :isDisabled="!showContentPreview" 
+                :toggleID="'previewToggle'"
+                @toggled="toggleContentPreview"
+            />
         </div>
 
         <div class="templateCol">
@@ -49,27 +41,19 @@
             ></div>
         </div>
 
-        <div class="informationCol">
-            <div class="toggleColumn">
-                <button @click="toggleColumn('informationCol')"> 
-                    <img src="./svg/ChevronArrow.svg" alt="Chevron arrow" style="transform: rotate(270deg)"> 
-                </button>
-            </div>
-
-            <div class="colContent">
-                <EditElement
-                    ref="editElement"
-                    :apiUrl="apiUrl" 
-                    :element="selectedElement"
-                    :minElementSize="minElementSize"
-                    :preview="{
-                        previewData,
-                        enabled: showContentPreview
-                    }"
-                    @deleteElement="updateList"
-                    @openResponse="openResponsePopup"
-                />
-            </div>
+        <div class="colContent rightCol">
+            <EditElement
+                ref="editElement"
+                :apiUrl="apiUrl" 
+                :element="selectedElement"
+                :minElementSize="minElementSize"
+                :preview="{
+                    previewData,
+                    enabled: showContentPreview
+                }"
+                @deleteElement="updateList"
+                @openResponse="openResponsePopup"
+            />
         </div>
     </div>
 </template>
@@ -529,19 +513,6 @@ export default {
 
         },
 
-        toggleColumn(columnSelector){
-            const column = document.querySelector(`div.${columnSelector}`)
-            if(column.classList.contains("shrinkElement")) 
-                column.classList.remove("shrinkElement")
-            else 
-                column.classList.add("shrinkElement")
-
-
-            const chevronArrow = document.querySelector(`div.${columnSelector} img`); 
-            const curRotation = this.getNumValue(chevronArrow.style.transform) // Get cur rotation
-            chevronArrow.style.transform = `rotate(${(curRotation + 180) % 360}deg)`; // Add 180 deg to make the arrow point the other way
-        },
-
         // property - String
         // returnArray - Boolean
         // Looks for numbers in string and returns them, if returnArray is true it returns an 
@@ -704,7 +675,7 @@ export default {
     overflow: hidden;
     
     .pdfTemplate{
-        @include boxShadow();
+        @include boxShadowC();
 
         max-width: 1500px;
         aspect-ratio: 1/1.414;
@@ -721,63 +692,23 @@ export default {
     }
 }
 
-.informationCol, .elementsCol{
-    $transition: 0.4s ease-out;
+.colContent{
+    @include section(20%, $primaryColor);
+    @include flex(column, initial, initial);
 
-    @include section(30%, $primaryColor);
-    @include flex(row, initial, initial);
+    position: relative;
+    row-gap: 1rem;
     
-    min-width: 18.5rem;
-    max-width: 22.5rem;
+    min-width: 16rem;
+    padding: 0.5rem;
 
-    transition: $transition;
-
-    .toggleColumn{
-        @include flex(row, center, stretch);
-        min-width: 2.5rem;
-        
-        &>button{
-            @include toggleColButton;
-        }
+    &.leftCol{
+        @include boxShadowR();
     }
-    .colContent{
-        width: 20rem;
-        min-width: 16rem;
-        padding: 0.5rem;
-
-        overflow: hidden;
-    }
-
-    img{
-        padding: 0.25rem;
-        transition: $transition;
+    &.rightCol{
+        @include boxShadowL();
     }
 }
-
-.elementsCol > .colContent{
-    & > *{
-        margin-bottom: 1rem;
-    }
-}
-
-.shrinkElement{
-    width: 2.5rem;
-    min-width: 0rem;
-
-    &>.colContent{
-        width: 0;
-        min-width: 0;
-        padding: 0;
-    }
-
-    &.informationCol>.colContent{
-        transition: 4s;
-    }
-    &.elementsCol>.colContent{
-        transition: 0.4s;
-    }
-}
-
 
 @media only screen and (min-width: 1200px) {
     div.pdfTemplate{
