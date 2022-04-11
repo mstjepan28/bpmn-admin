@@ -13,7 +13,7 @@
                 <ConvertPdfBtn 
                     :apiUrl="apiUrl" 
                     :selectionList="selectionList" 
-                    :pdfTemplate="pdfTemplate" 
+                    :pdfTemplateBuffer="pdfTemplateBuffer" 
                     :pdfDimensions="pdfDimensions"
                     @openResponse="openResponsePopup"
                 />
@@ -42,7 +42,11 @@
         </div>
 
         <div class="templateCol">
-            <div id="pdfTemplate" class="pdfTemplate"></div>
+            <div 
+                tabindex="0"
+                id="pdfTemplate" 
+                class="pdfTemplate"
+            ></div>
         </div>
 
         <div class="informationCol">
@@ -97,6 +101,8 @@ export default {
             templateId: null,
             minElementSize: 15,
 
+            pdfTemplate: null,
+
             previewData: null,
             showContentPreview: false,
 
@@ -109,7 +115,7 @@ export default {
             selectedElement: null,
             selectionList: [],
 
-            pdfTemplate: null,
+            pdfTemplateBuffer: null,
             pdfDimensions: null,
         }
     },
@@ -216,16 +222,14 @@ export default {
 
         /* ------------------------------------------------------------ */
         disableDrawing(){
-            const pdfTemplate = document.getElementById("pdfTemplate");
-
             if(this.selectionCreation.selection)
                 this.selectionCreation.selection.remove();
 
-            pdfTemplate.removeEventListener("click", this.selectionCreation.drawHandler);
-            pdfTemplate.removeEventListener("mousemove", this.selectionCreation.updateHandler);
-            pdfTemplate.style.cursor = "";
+            this.pdfTemplate.removeEventListener("click", this.selectionCreation.drawHandler);
+            this.pdfTemplate.removeEventListener("mousemove", this.selectionCreation.updateHandler);
+            this.pdfTemplate.style.cursor = "";
             
-            this.togglePointerEvents(pdfTemplate, true);
+            this.togglePointerEvents(this.pdfTemplate, true);
             
             this.selectionCreation.drawHandler = null;
             this.selectionCreation.updateHandler = null;
@@ -241,7 +245,6 @@ export default {
             this.selectionCreation.selection = null;
 
             const thisRef = this;
-            const pdfTemplate = document.getElementById("pdfTemplate");
 
             /* ------------------------------------------------------------ */
 
@@ -268,7 +271,7 @@ export default {
 
                     positionData = { x: 0, y: 0, width: 0, height: 0 };
 
-                    pdfTemplate.removeEventListener("mousemove", thisRef.selectionCreation.updateHandler);
+                    thisRef.pdfTemplate.removeEventListener("mousemove", thisRef.selectionCreation.updateHandler);
                 }
                 else{
                     drawingStarted = true;
@@ -278,16 +281,16 @@ export default {
 
                     thisRef.selectionCreation.selection = thisRef.createSelection(positionData);
     
-                    pdfTemplate.addEventListener('mousemove', thisRef.selectionCreation.updateHandler);
+                    thisRef.pdfTemplate.addEventListener('mousemove', thisRef.selectionCreation.updateHandler);
                 }
             }
             
             /* ------------------------------------------------------------ */
 
             this.togglePointerEvents(pdfTemplate, false);
-            pdfTemplate.style.cursor = "crosshair";
+            this.pdfTemplate.style.cursor = "crosshair";
 
-            pdfTemplate.addEventListener("click", this.selectionCreation.drawHandler)
+            this.pdfTemplate.addEventListener("click", this.selectionCreation.drawHandler)
 
             /* ------------------------------------------------------------ */
         },
@@ -445,8 +448,8 @@ export default {
             Object.keys(newData).forEach(key => elementObj.positionData[key] = newData[key])
         },
 
-        setPdfTemplate(pdfTemplate, pdfDimensions){
-            this.pdfTemplate = pdfTemplate;
+        setPdfTemplate(pdfTemplateBuffer, pdfDimensions){
+            this.pdfTemplateBuffer = pdfTemplateBuffer;
             this.pdfDimensions = pdfDimensions;
         },
 
@@ -467,6 +470,8 @@ export default {
         },
         
         pasteSelectedElement() {
+            if(document.activeElement != pdfTemplate) return;
+
             this.elementToCopy.positionData.x += 10;
             this.elementToCopy.positionData.y += 10;
 
@@ -592,8 +597,8 @@ export default {
 
             this.templateId = this.templateInfo.id;
 
-            const pdfTemplate = document.querySelector("div.pdfTemplate");
-            pdfTemplate.style.backgroundImage = `url(${this.apiUrl}/public/images/${this.templateInfo.id}.png?dummy=${Math.random()})`;
+            const imgUrl = `${this.apiUrl}/public/images/${this.templateInfo.id}.png?dummy=${Math.random()}`;
+            this.pdfTemplate.style.backgroundImage = `url(${imgUrl})`;
         },
 
         async getUUID(){
@@ -642,6 +647,8 @@ export default {
     async mounted(){
         this.interaction();
         this.previewData = await this.getPreviewData();
+
+        this.pdfTemplate = document.getElementById("pdfTemplate");
 
         if(this.templateInfo) 
             this.buildTemplate();
@@ -707,6 +714,10 @@ export default {
         background-position: center;
         background-repeat: no-repeat; 
         background-size: cover;
+
+        &:hover, &:focus{
+            outline: none;
+        }
     }
 }
 

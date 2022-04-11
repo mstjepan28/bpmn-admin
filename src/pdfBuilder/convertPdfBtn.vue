@@ -27,7 +27,7 @@ export default {
             type: Array,
             required: true
         },
-        pdfTemplate: {
+        pdfTemplateBuffer: {
             type: ArrayBuffer,
             required: false
 
@@ -48,12 +48,12 @@ export default {
             if(this.isProcessing) return;
             this.isProcessing = true;
 
-            const selectionList = this.filterList(); 
+            const selectionList = this.filterList();
             const pdfDimensions = this.pdfDimensions || {width: 596, height: 842}
 
             const blobPdfDimensions = new Blob([ JSON.stringify(pdfDimensions) ], { type: "application/json" });
             const blobSelectionList = new Blob([ JSON.stringify(selectionList) ], { type: "application/json" });
-            const blobPdfTemplate = new Blob([ this.pdfTemplate ], { type : 'application/pdf'})
+            const blobPdfTemplate = new Blob([ this.pdfTemplateBuffer ], { type : 'application/pdf'})
 
             let data = new FormData();
             data.append("pdfDimensions", blobPdfDimensions, "pdfDimensions")
