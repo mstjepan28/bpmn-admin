@@ -1,5 +1,5 @@
 <template>
-    <div class="errorPopup">
+    <div class="feedbackPopup">
         <div class="feedbackWrapper"
             :class="{
                 fail: requestResult == 'fail',
@@ -74,7 +74,7 @@ export default {
         },
 
         openPopup(){
-            const popup = document.querySelector("div.errorPopup");
+            const popup = document.querySelector("div.feedbackPopup");
 
             popup.classList.add("slideDown");
             popup.classList.remove("slideUp");
@@ -87,7 +87,7 @@ export default {
                 this.closeTimeout = null;
             }
 
-            const popup = document.querySelector("div.errorPopup");
+            const popup = document.querySelector("div.feedbackPopup");
 
             popup.classList.add("slideUp");
             popup.classList.remove("slideDown");
@@ -113,7 +113,7 @@ $animationDuration: 0.4s;
     background: $redHighlight;
 }
 
-.errorPopup{
+.feedbackPopup{
     @include flex(row, center, stretch);
 
     width: 400px;
@@ -121,6 +121,7 @@ $animationDuration: 0.4s;
 
     position: absolute;
     left: 20px;
+    z-index: 10;
 
     overflow: hidden;
 
@@ -129,7 +130,7 @@ $animationDuration: 0.4s;
 
     transform: translateY($slideUpDistance);
 
-    &>.feedbackWrapper{
+    & > .feedbackWrapper{
         @include flex(row, center, center);
 
         width: 100%;

@@ -285,20 +285,22 @@ export default {
         // ************************************************************ //
 
         // sets the state of the "Static content" switch
-        toggleStaticContent(newElement=null){            
+        toggleStaticContent(newElement=null){
             // internal state of the toggle switch
             const internalState = this.$refs.staticToggle.toggleState;
 
             this.element.staticContent = "";
-            this.element.elementRef.innerText = "";
+            
+            // if this is applied to an image, it destroys the internal component 
+            if(this.element.type != "image") this.element.elementRef.innerText = ""; 
 
-            if(this.element.isStatic == internalState) 
+            if(this.element.isStatic == internalState)
                 return
             else if(newElement)
                 this.$refs.staticToggle.changeState(true);
             else
                 this.element.isStatic = internalState;
-
+                
             this.destroyComponent();
             this.elementTypeImage();
         },
@@ -322,8 +324,8 @@ export default {
 
         shouldDestroyComponent() {
             return this.element.internalComponent &&
-            !this.element.isStatic &&
-            this.elementType == "image"
+            this.element.isStatic &&
+            this.elementType != "image"
         },
 
         // Dynamically create an instance of the ImageUpload component and mount it as a child
@@ -366,6 +368,7 @@ export default {
             if(!this.element) return;
 
             this.newElementMounted = true;
+            
             this.elementType = this.element.type;
             this.staticContent = this.element.staticContent;
             this.positionData = this.element.positionData;
@@ -380,7 +383,7 @@ export default {
 
         elementType(){
             if(!this.elementType || this.newElementMounted) return;
-            if(this.elementType == "image") this.destroyComponent();
+            if(this.elementType != "image") this.destroyComponent();
 
             this.staticContent = ""
             this.element.type = this.elementType;

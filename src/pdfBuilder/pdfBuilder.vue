@@ -299,7 +299,7 @@ export default {
             newSelection.style.pointerEvents = "none"; // needed when shrinking the selection
             newSelection.style.backgroundColor = "rgba(173,216,230, 0.25)";
 
-            document.getElementById("pdfTemplate").appendChild(newSelection);
+            this.pdfTemplate.appendChild(newSelection);
 
             this.shiftFocus(newSelection)
 
@@ -310,12 +310,13 @@ export default {
         // positionData - { x: num, y: num, width: num, height: num}
         // Set the data-index to the last element of the list and push the selection to the selection list
         saveNewSelection(selection, positionData){
+            const id = Date.now() + "" + Math.ceil(Math.random() * 1000)
             selection.classList.add("draggable", "selection");
-
+            
             this.readjustPosition(selection, positionData);
 
             const newElement = {
-                id: Date.now() + "" + Math.ceil(Math.random() * 1000),
+                id: id,
                 elementRef: selection,
                 positionData: positionData,
 
@@ -366,7 +367,7 @@ export default {
         // Remove element from dom and from the list. Update the index of each element in the list and because the
         //  element can only be deleted once its selected, set the selected element to null
         updateList(element){
-            document.getElementById("pdfTemplate").removeChild(element.elementRef);
+            this.pdfTemplate.removeChild(element.elementRef);
             this.selectionList = this.selectionList.filter(elem => elem != element);
 
             this.selectedElement = null;
@@ -621,13 +622,11 @@ export default {
 
         this.pdfTemplate = document.getElementById("pdfTemplate");
 
-        if(this.templateInfo) 
-            this.buildTemplate();
-        else
-            await this.getUUID(); 
+        if(this.templateInfo) this.buildTemplate();
+        else await this.getUUID(); 
 
         document.addEventListener('keydown', this.keyboardSupport);
-        document.getElementById("pdfTemplate").addEventListener("click", this.selectElementOnClick)
+        this.pdfTemplate.addEventListener("click", this.selectElementOnClick)
     },
     beforeDestroy(){
         document.removeEventListener('keydown', this.keyboardSupport);

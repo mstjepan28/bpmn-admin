@@ -49,6 +49,7 @@ export default {
             this.isProcessing = true;
 
             const selectionList = this.filterList();
+            console.log(JSON.stringify(selectionList))
             const pdfDimensions = this.pdfDimensions || {width: 596, height: 842}
 
             const blobPdfDimensions = new Blob([ JSON.stringify(pdfDimensions) ], { type: "application/json" });
@@ -114,8 +115,8 @@ export default {
         // Get the base64 image from the internal component. If it doesn't exist return the existing static 
         //  content or false
         getStaticContent(element){
-            if(!element.internalComponent) return element.staticContent || false;
-            return element.internalComponent.getImageSource();
+            if(element.internalComponent) return element.internalComponent.getImageSource();
+            return element.variable? false: element.staticContent
         },
         
         

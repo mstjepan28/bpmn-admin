@@ -1,12 +1,13 @@
 <template>
     <PdfBuilder
         v-if="templateInfo"
-        :apiUrl="'http://localhost:5500'"
+        :apiUrl="baseURL"
         :templateInfo="templateInfo"
     />
 </template>
 
 <script>
+import axios from "axios";
 import PdfBuilder from "../pdfBuilder/pdfBuilder.vue";
 
 export default {
@@ -15,12 +16,16 @@ export default {
     data(){
         return{
             templateInfo: null,
+            baseURL: 'http://localhost:5500'
         }
     },
 
     methods:{
-        getTemplateInfo(){
+        async getTemplateInfo(){
             // TODO get request to fetch this from the backend
+            const placeholderId = "362b2d2a-e709-4e53-815c-01ebf11a882f"
+            const template = await axios.get(`${this.baseURL}/templates?id=${placeholderId}`);
+            console.log(template)
             return {
                 id: "362b2d2a-e709-4e53-815c-01ebf11a882f",
                 instructionList: [
