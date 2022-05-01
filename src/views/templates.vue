@@ -22,8 +22,8 @@
                     <tr :key="template.id" v-for="template in templateList">
                         <td>{{ template.name }}</td>
                         <td>{{ template.created_by }}</td>
-                        <td>{{ template.created_at }}</td>
-                        <td>{{ template.updated_at }}</td>
+                        <td>{{ formateDateTime(template.created_at + "aaa") }}</td>
+                        <td>{{ formateDateTime(template.updated_at) }}</td>
                         <td>
                             <button type="button" @click="editTemplate(template.id)">Edit</button>
                         </td>
@@ -51,6 +51,7 @@
 
 <script>
 import axios from "axios";
+import dayjs from "dayjs";
 
 export default {
     data () {
@@ -61,6 +62,10 @@ export default {
         }
     },
     methods: {
+        formateDateTime(timestamp) {
+            return dayjs(parseInt(timestamp)).format('YYYY-MM-DD HH:mm:ss');
+        },
+
         editTemplate(templateId){
             this.$router.push(`/templates/edit/${templateId}`)
         },
