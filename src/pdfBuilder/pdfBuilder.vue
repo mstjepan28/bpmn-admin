@@ -563,7 +563,7 @@ export default {
         // if a template is getting edited, the original template has to be built first based on its instructions
         // instructions are a JSON object that describes selections of the template
         buildTemplate(){
-            for(let instructions of this.templateInfo.instructionList){
+            for(let instructions of this.templateInfo.selection_list){
                 this.rebuildElement(instructions, true)
             }
 

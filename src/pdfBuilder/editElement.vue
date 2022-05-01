@@ -135,7 +135,8 @@ export default {
             staticContent: "",
             elementType: "",
 
-            templateVariables: [],
+            // TODO: handle variables
+            templateVariables: [], 
         }
     },
     computed:{
@@ -164,38 +165,6 @@ export default {
 
             const value = this.preview.previewData[this.element.variable];
             this.element.elementRef.innerText = value || "";
-        },
-
-        async getVariables(){
-            document.documentElement.style.cursor = "wait";
-
-            try{
-                const response = await axios.get(`${this.apiUrl}/variables`)
-                this.formatVariables(response.data.variables);
-            }catch(error){
-                const status = error.message == "Network Error"? 408: 500;
-                this.$emit("openResponse", status);
-            }
-            
-            document.documentElement.style.cursor = "";
-        },
-
-        formatVariables(variableList){
-            this.templateVariables = variableList.reduce((resultArray, variable) => {
-                if(variable == "id") return resultArray;
-
-                let label = variable.split("_")
-                
-                let temp = label[0]
-                label[0] = temp.charAt(0).toUpperCase() + temp.slice(1)
-
-                resultArray.push({
-                    label: label.join(" "),
-                    value: variable
-                })
-
-                return resultArray
-            }, [])
         },
 
         // ************************************************************ //
@@ -360,7 +329,6 @@ export default {
     },
     async mounted(){
         this.pdfTemplate = document.getElementById("pdfTemplate");
-        await this.getVariables();
     },
     watch:{
         // When selected element gets changed, check its movable 
@@ -383,7 +351,9 @@ export default {
 
         elementType(){
             if(!this.elementType || this.newElementMounted) return;
-            if(this.elementType != "image") this.destroyComponent();
+            if(this.elementType != "image") {
+                this.destroyComponent();
+            }
 
             this.staticContent = ""
             this.element.type = this.elementType;
