@@ -88,10 +88,26 @@ export default {
             }
         },
 
+        sortTemplates(sortBy, order){
+            this.templateList.sort((a, b) => {
+                if(order == "asc"){
+                    if(a[sortBy] < b[sortBy]) return -1;
+                    if(a[sortBy] > b[sortBy]) return 1;
+                    return 0;
+                }
+                else{
+                    if(a[sortBy] < b[sortBy]) return 1;
+                    if(a[sortBy] > b[sortBy]) return -1;
+                    return 0;
+                }
+            });
+        },
+
         async fetchTemplates() {
             try{
                 const response = await axios.get(`${this.baseURL}/templates`);
                 this.templateList = response.data;
+                this.sortTemplates('updated_at', 'desc');
             }catch(error){
                 console.log(error)
             }

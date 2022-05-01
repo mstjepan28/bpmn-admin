@@ -10,17 +10,22 @@
             </button>
             
             <ConvertPdfBtn 
-                :apiUrl="apiUrl" 
-                :selectionList="selectionList" 
-                :pdfTemplateBuffer="pdfTemplateBuffer" 
-                :pdfDimensions="pdfDimensions"
+                :apiUrl="apiUrl"
+                :template="template"
+                :pdfTemplateBuffer="pdfTemplateBuffer"
+                @openResponse="openResponsePopup"
+            />
+            <SaveTemplateButton 
+                :apiUrl="apiUrl"
+                :template="template"
+                :pdfTemplateBuffer="pdfTemplateBuffer"
                 @openResponse="openResponsePopup"
             />
 
             <PdfToImage 
-                v-if="templateId"
+                v-if="template.id"
                 :apiUrl="apiUrl"
-                :templateId="templateId"
+                :templateId="template.id"
                 @pdfUploaded="setPdfTemplate"
             />
 
@@ -61,6 +66,7 @@
 <script>
 import EditElement   from "./editElement.vue";
 import ConvertPdfBtn from "./convertPdfBtn.vue"
+import SaveTemplateButton from "./saveTemplateButton.vue";
 import PdfToImage    from "./pdfToImage.vue";
 import ResponsePopup from "./responsePopup.vue";
 import ToggleSwitch from "./ToggleSwitch.vue";
@@ -79,28 +85,31 @@ export default {
             required: false
         }
     },
-    components: { EditElement, ConvertPdfBtn, PdfToImage, ResponsePopup, ToggleSwitch },
+    components: { EditElement, ConvertPdfBtn, PdfToImage, ResponsePopup, ToggleSwitch, SaveTemplateButton },
     data(){
         return{
-            templateId: null,
-            minElementSize: 15,
-
-            pdfTemplate: null,
-
-            previewData: null,
-            showContentPreview: false,
-
-            selectionCreation: {
-                drawHandler: null,
-                selection: null,
+            pdfTemplate: null, // dom element 
+            minElementSize: 15, // minimum size to which an element can be resized
+            selectionCreation: { 
+                drawHandler: null, // handler for the draw interaction
+                selection: null, // selection currently being drawn
             },
 
-            elementToCopy: null,
-            selectedElement: null,
-            selectionList: [],
+            previewData: null, // data to be displayed in the preview
+            showContentPreview: false, // show the preview or not
 
-            pdfTemplateBuffer: null,
-            pdfDimensions: null,
+            elementToCopy: null, // dom element to be copied
+            selectedElement: null, // element being displayed in the edit element component
+
+            pdfTemplateBuffer: null, // the pdf file thats used as a base for the template
+
+            template: {
+                id: null,
+                pdfDimensions: null,
+                name: "New template",
+                tags: [],
+                selectionList: []
+            }
         }
     },
     computed:{
@@ -328,7 +337,7 @@ export default {
                 internalComponent: null,
             }
 
-            this.selectionList.push(newElement)
+            this.template.selectionList.push(newElement)
             this.elementSelected(newElement);
 
             return newElement;
@@ -368,13 +377,13 @@ export default {
         //  element can only be deleted once its selected, set the selected element to null
         updateList(element){
             this.pdfTemplate.removeChild(element.elementRef);
-            this.selectionList = this.selectionList.filter(elem => elem != element);
+            this.template.selectionList = this.template.selectionList.filter(elem => elem != element);
 
             this.selectedElement = null;
         },
 
         getElementFromList(element){
-            return this.selectionList.filter(elem => elem.elementRef == element)[0];
+            return this.template.selectionList.filter(elem => elem.elementRef == element)[0];
         },
 
         // event - click on event
@@ -435,7 +444,7 @@ export default {
 
         setPdfTemplate(pdfTemplateBuffer, pdfDimensions){
             this.pdfTemplateBuffer = pdfTemplateBuffer;
-            this.pdfDimensions = pdfDimensions;
+            this.template.pdfDimensions = pdfDimensions;
         },
 
         openResponsePopup(resultStatus, customMsg=null){
@@ -567,7 +576,7 @@ export default {
                 this.rebuildElement(instructions, true)
             }
 
-            this.templateId = this.templateInfo.id;
+            this.template.id = this.templateInfo.id;
 
             const imgUrl = `${this.apiUrl}/public/images/${this.templateInfo.id}.png?dummy=${Math.random()}`;
             this.pdfTemplate.style.backgroundImage = `url(${imgUrl})`;
@@ -577,7 +586,7 @@ export default {
             
             try{
                 const response = await axios.get(`${this.apiUrl}/generateUUID`);
-                this.templateId = response.data.id;
+                this.template.id = response.data.id;
             }catch(error){
                 const status = error.message == "Network Error"? 408: 500;
                 this.openResponsePopup(status);
@@ -597,12 +606,13 @@ export default {
         },
 
         setPreviewData(preview) {
-            for(let selection of this.selectionList){
+            for(let selection of this.template.selectionList){
                 if(selection.isStatic) continue; // don't display static content - it would overwrite user input 
 
                 const previewValue = preview[selection.variable] || "";
 
-                if(selection.type == 'image') continue; // TODO 
+                // TODO: make preview of images
+                if(selection.type == 'image') continue; 
 
                 selection.elementRef.innerHTML = previewValue;
                 selection.staticContent = previewValue;

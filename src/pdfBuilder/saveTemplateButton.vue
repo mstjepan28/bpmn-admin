@@ -1,0 +1,105 @@
+<template>
+  <BaseButton
+    :onclick="saveTemplate"
+    text="Save template"
+  />
+</template>
+
+<script>
+import axios from "axios";
+import BaseButton from "./baseButton.vue";
+
+export default {
+  props:{
+    apiUrl: {
+      type: String,
+      required: true
+    },
+    template: {
+      type: Object,
+      required: true
+    },
+    pdfTemplateBuffer: {
+      type: ArrayBuffer,
+      required: false
+
+    },
+  },
+  components: { BaseButton },
+  methods:{
+    async saveTemplate(){
+      const template = this.formatTemplate();
+
+      const blobTemplate = new Blob([ JSON.stringify(template) ], { type: "application/json" });
+      const blobPdfFile = new Blob([ this.pdfTemplateBuffer ], { type : 'application/pdf'})
+
+      let data = new FormData();
+      data.append("template", blobTemplate, "template")
+      data.append("pdfTemplate", blobPdfFile, "pdfTemplate.pdf")
+
+      try{
+        const response = await axios.post(`${this.apiUrl}/templates`, data, {
+          header : {'Content-Type': `multipart/form-data; boundary=${data._boundary}`}
+        });
+        
+        console.log(response)
+        this.$emit("openResponse", response.status);
+      }catch(error){
+        const status = error.message == "Network Error"? 408: 500;
+        this.$emit("openResponse", status);
+      }
+    },
+
+    formatTemplate() {
+      const formattedSelectionList = this.formatSelectionList();
+      const pdfDimensions = this.template.pdfDimensions || {width: 596, height: 842}
+      
+      return {
+        ...this.template,
+        pdfDimensions: pdfDimensions,
+        selectionList: formattedSelectionList,
+      }
+    },
+
+    // Filter data od list elements so it contains only relevant data
+    formatSelectionList(){
+      return this.template.selectionList.map(selection => {
+        const normalizedPositionData = this.normalizePositionData(selection.positionData);
+        const staticContent = this.getStaticContent(selection);
+        
+        return {
+          positionData: normalizedPositionData,
+          type: selection.type,
+          variable: selection.variable,
+          staticContent: staticContent,
+          internalComponent: !!selection.internalComponent
+        }
+      })
+    },
+
+    // This PDF and the one on the frontend do not match in dimensions so the positionData is offset. 
+    //  To fix that the positionData is the percentage of the width/height of the PDF
+    normalizePositionData(positionData){
+      const pdfTemplate = document.querySelector("div.pdfTemplate")
+      const width = pdfTemplate.offsetWidth;
+      const height = pdfTemplate.offsetHeight;
+
+      return{
+        x: positionData.x / width,
+        y: positionData.y / height, 
+        width: positionData.width / width, 
+        height: positionData.height / height, 
+      }
+    },
+
+    // Get the base64 image from the internal component. If it doesn't exist return the existing static 
+    //  content or false
+    getStaticContent(selection){
+      if(selection.internalComponent) 
+        return selection.internalComponent.getImageSource();
+      
+      return selection.variable? false: selection.staticContent
+    }
+  }
+}
+</script>
