@@ -17,9 +17,11 @@
             />
             <SaveTemplateButton 
                 :apiUrl="apiUrl"
+                :isNewTemplate="isNewTemplate"
                 :template="template"
                 :pdfTemplateBuffer="pdfTemplateBuffer"
                 @openResponse="openResponsePopup"
+                @templateSaved="handleTemplateSave"
             />
 
             <PdfToImage 
@@ -101,8 +103,8 @@ export default {
             elementToCopy: null, // dom element to be copied
             selectedElement: null, // element being displayed in the edit element component
 
+            isNewTemplate: false, // is the template being created or edited
             pdfTemplateBuffer: null, // the pdf file thats used as a base for the template
-
             template: {
                 id: null,
                 pdfDimensions: null,
@@ -624,6 +626,11 @@ export default {
 
             const preview = this.showContentPreview?  this.previewData: {};
             this.setPreviewData(preview);
+        },
+
+        handleTemplateSave(processedTemplate) {
+            this.isNewTemplate = false;
+            this.template = processedTemplate;
         }
     },
     async mounted(){
@@ -632,8 +639,14 @@ export default {
 
         this.pdfTemplate = document.getElementById("pdfTemplate");
 
-        if(this.templateInfo) this.buildTemplate();
-        else await this.getUUID(); 
+        if(this.templateInfo) {
+            this.buildTemplate();
+            this.isNewTemplate = false;
+        }
+        else {
+            await this.getUUID();
+            this.isNewTemplate = true;
+        }
 
         document.addEventListener('keydown', this.keyboardSupport);
         this.pdfTemplate.addEventListener("click", this.selectElementOnClick)

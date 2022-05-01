@@ -15,6 +15,10 @@ export default {
       type: String,
       required: true
     },
+    isNewTemplate: {
+      type: Boolean,
+      required: true
+    },
     template: {
       type: Object,
       required: true
@@ -22,11 +26,38 @@ export default {
     pdfTemplateBuffer: {
       type: ArrayBuffer,
       required: false
-
     },
   },
   components: { BaseButton },
   methods:{
+    async createTemplate(data) {
+      try{
+        const response = await axios.post(`${this.apiUrl}/templates`, data, {
+          header : {'Content-Type': `multipart/form-data; boundary=${data._boundary}`}
+        });
+        
+        console.log(response)
+        this.$emit("openResponse", response.status);
+        this.$emit("templateSaved", response.data);
+      }catch(error){
+        const status = error.message == "Network Error"? 408: 500;
+        this.$emit("openResponse", status);
+      }
+    },
+
+    async updateTemplate(data) {
+      try{
+        const response = await axios.put(`${this.apiUrl}/templates`, data, {
+          header : {'Content-Type': `multipart/form-data; boundary=${data._boundary}`}
+        });
+        
+        this.$emit("openResponse", response.status);
+      }catch(error){
+        const status = error.message == "Network Error"? 408: 500;
+        this.$emit("openResponse", status);
+      }
+    },
+
     async saveTemplate(){
       const template = this.formatTemplate();
 
@@ -37,16 +68,11 @@ export default {
       data.append("template", blobTemplate, "template")
       data.append("pdfTemplate", blobPdfFile, "pdfTemplate.pdf")
 
-      try{
-        const response = await axios.post(`${this.apiUrl}/templates`, data, {
-          header : {'Content-Type': `multipart/form-data; boundary=${data._boundary}`}
-        });
-        
-        console.log(response)
-        this.$emit("openResponse", response.status);
-      }catch(error){
-        const status = error.message == "Network Error"? 408: 500;
-        this.$emit("openResponse", status);
+      if(this.isNewTemplate){
+        await this.createTemplate(data);
+      }
+      else{
+        await this.updateTemplate(data);
       }
     },
 

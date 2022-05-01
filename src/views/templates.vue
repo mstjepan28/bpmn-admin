@@ -74,7 +74,7 @@ export default {
 
             sorting: {
                 sortBy: 'name',
-                sortOrder: 'asc'
+                sortOrder: 'desc'
             }
         }
     },
@@ -106,7 +106,7 @@ export default {
         },
 
         sortTemplates(sortBy){
-            let order =  'asc';
+            let order;
             if(this.sorting.sortBy == sortBy){
                 order = this.sorting.sortOrder == 'asc' ? 'desc' : 'asc';
             }
