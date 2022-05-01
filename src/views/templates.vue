@@ -9,12 +9,24 @@
         <v-simple-table v-if="templateList.length >= 1">
                 <thead>
                     <tr>
-                        <th class="text-left">Template name</th>
-                        <th class="text-left">Created by </th>
-                        <th class="text-left">Created at</th>
-                        <th class="text-left">Updated at</th>
-                        <th class="text-left">Edit template</th>
-                        <th class="text-left">Delete template</th>
+                        <th class="text-left">
+                            <button type="button" @click="sortTemplates('name')">Template name</button>
+                        </th>
+                        <th class="text-left">
+                            <button type="button" @click="sortTemplates('created_by')">Created by</button>
+                        </th>
+                        <th class="text-left">
+                            <button type="button" @click="sortTemplates('created_at')">Created at</button>
+                        </th>
+                        <th class="text-left">
+                            <button type="button" @click="sortTemplates('updated_at')">Updated at</button>
+                        </th>
+                        <th class="text-left">
+                            Edit template
+                        </th>
+                        <th class="text-left">
+                            Delete template
+                        </th>
                     </tr>
                 </thead>
 
@@ -59,6 +71,11 @@ export default {
             selectedTemplate: null,
             baseURL: 'http://localhost:5500',
             templateList: [],
+
+            sorting: {
+                sortBy: 'name',
+                sortOrder: 'asc'
+            }
         }
     },
     methods: {
@@ -88,7 +105,12 @@ export default {
             }
         },
 
-        sortTemplates(sortBy, order){
+        sortTemplates(sortBy){
+            let order =  'asc';
+            if(this.sorting.sortBy == sortBy){
+                order = this.sorting.sortOrder == 'asc' ? 'desc' : 'asc';
+            }
+
             this.templateList.sort((a, b) => {
                 if(order == "asc"){
                     if(a[sortBy] < b[sortBy]) return -1;
@@ -101,13 +123,18 @@ export default {
                     return 0;
                 }
             });
+
+            this.sorting = {
+                sortBy: sortBy,
+                sortOrder: order
+            }
         },
 
         async fetchTemplates() {
             try{
                 const response = await axios.get(`${this.baseURL}/templates`);
                 this.templateList = response.data;
-                this.sortTemplates('updated_at', 'desc');
+                this.sortTemplates('updated_at');
             }catch(error){
                 console.log(error)
             }
