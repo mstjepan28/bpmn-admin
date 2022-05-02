@@ -630,7 +630,12 @@ export default {
 
         handleTemplateSave(processedTemplate) {
             this.isNewTemplate = false;
-            this.template = processedTemplate;
+
+            // updating the template info but keeping the old selection list since it contains the dom elements
+            this.template = {
+                ...processedTemplate,
+                selectionList: this.template.selectionList
+            }
         }
     },
     async mounted(){
