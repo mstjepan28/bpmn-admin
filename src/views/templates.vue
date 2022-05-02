@@ -34,7 +34,7 @@
                     <tr :key="template.id" v-for="template in templateList">
                         <td>{{ template.name }}</td>
                         <td>{{ template.created_by }}</td>
-                        <td>{{ formateDateTime(template.created_at + "aaa") }}</td>
+                        <td>{{ formateDateTime(template.created_at) }}</td>
                         <td>{{ formateDateTime(template.updated_at) }}</td>
                         <td>
                             <button type="button" @click="editTemplate(template.id)">Edit</button>
@@ -80,13 +80,11 @@ export default {
     },
     methods: {
         formateDateTime(timestamp) {
-            return dayjs(parseInt(timestamp)).format('YYYY-MM-DD HH:mm:ss');
+            return dayjs(timestamp).format('YYYY-MM-DD HH:mm:ss');
         },
-
         editTemplate(templateId){
             this.$router.push(`/templates/edit/${templateId}`)
         },
-
         selectToDelete(templateId){
             this.selectedTemplate = templateId;
         },
@@ -95,8 +93,7 @@ export default {
         },
         async deleteTemplate(){
             try{
-                const response = await axios.delete(`${this.baseURL}/templates?id=${this.selectedTemplate}`);
-                console.log(response.data);
+                await axios.delete(`${this.baseURL}/templates?id=${this.selectedTemplate}`);
 
                 this.templateList = this.templateList.filter(template => template.id != this.selectedTemplate);
                 this.selectToDelete = null;

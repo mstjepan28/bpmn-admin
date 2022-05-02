@@ -36,7 +36,6 @@ export default {
           header : {'Content-Type': `multipart/form-data; boundary=${data._boundary}`}
         });
         
-        console.log(response)
         this.$emit("openResponse", response.status);
         this.$emit("templateSaved", response.data);
       }catch(error){
