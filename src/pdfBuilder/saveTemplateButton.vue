@@ -96,6 +96,7 @@ export default {
           positionData: normalizedPositionData,
           type: selection.type,
           variable: selection.variable,
+          isStatic: selection.isStatic,
           staticContent: staticContent,
           internalComponent: !!selection.internalComponent
         }
