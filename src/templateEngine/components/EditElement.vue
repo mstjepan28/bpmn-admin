@@ -261,7 +261,7 @@ export default {
       this.element.staticContent = "";
       
       // if this is applied to an image, it destroys the internal component 
-      if(this.element.type != "image") this.element.elementRef.innerText = ""; 
+      if(this.element.type != "image" && !this.element.isStatic) this.element.elementRef.innerText = ""; 
 
       if(this.element.isStatic == internalState)
         return
@@ -280,6 +280,7 @@ export default {
       if(this.elementType == "image") 
         return this.element.internalComponent.setImageURL(this.staticContent);
 
+      console.log(3)
       this.element.elementRef.innerText = this.staticContent || "";
     },
 

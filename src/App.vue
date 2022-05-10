@@ -59,7 +59,7 @@
         </v-app-bar> -->
 
         <!-- Sizes your content based upon application components -->
-        <v-main :class="{templateBuilderContainer: isPageTemplateBuilder}">
+        <v-main :class="{templateBuilderContainer: isTemplateEngineRoute}">
             <!-- Provides the application the proper gutter -->
             <v-container fluid>
                 <!-- If using vue-router -->
@@ -84,9 +84,8 @@ export default {
     }),
 
     computed:{
-        isPageTemplateBuilder(){
+        isTemplateEngineRoute(){
             const route = this.$route.name;
-            console.log(this.$router)
             return route == "templates-create" || route == "templates-edit";
         }
     }

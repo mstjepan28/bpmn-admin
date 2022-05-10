@@ -566,7 +566,8 @@ export default {
 
         const selection = this.saveNewSelection(selectionDom, calculatedPositionData);
 
-        selection.isStatic = instructions.staticContent;
+        selection.isStatic = instructions.isStatic;
+        selection.staticContent = instructions.staticContent;
         selection.type = instructions.type;
         selection.variable = instructions.variable;
       },
@@ -575,7 +576,10 @@ export default {
       // instructions are a JSON object that describes selections of the template
       buildTemplate(){
         for(let instructions of this.templateInfo.selection_list){
-          this.rebuildElement(instructions, true)
+          console.log(instructions)
+          this.rebuildElement(instructions, true);
+
+          console.log(this.template.selectionList)
         }
 
         this.template.id = this.templateInfo.id;
@@ -613,8 +617,7 @@ export default {
           const previewValue = preview[selection.variable] || "";
 
           // TODO: make preview of images
-          if(selection.type == 'image') continue; 
-
+          if(selection.type == 'image') continue;
           selection.elementRef.innerHTML = previewValue;
           selection.staticContent = previewValue;
         }

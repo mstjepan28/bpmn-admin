@@ -24,7 +24,6 @@ export default {
     async fetchTemplateById(templateId){
       try{
         const response = await axios.get(`${this.baseURL}/templates?id=${templateId}`);
-        console.log(JSON.stringify(response.data));
         this.template = response.data;
       }catch(error){
         console.log(error)
