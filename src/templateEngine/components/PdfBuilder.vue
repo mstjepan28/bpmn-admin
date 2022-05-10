@@ -448,6 +448,7 @@ export default {
       setPdfTemplate(pdfTemplateBuffer, pdfDimensions){
         this.pdfTemplateBuffer = pdfTemplateBuffer;
         this.template.pdfDimensions = pdfDimensions;
+        this.template.hasBackground = true;
       },
 
       openResponsePopup(resultStatus, customMsg=null){
@@ -574,18 +575,27 @@ export default {
 
       // if a template is getting edited, the original template has to be built first based on its instructions
       // instructions are a JSON object that describes selections of the template
-      buildTemplate(){
-        for(let instructions of this.templateInfo.selection_list){
-          console.log(instructions)
+      async buildTemplate(){
+        this.templateInfo.selection_list.forEach(instructions => {
           this.rebuildElement(instructions, true);
-
-          console.log(this.template.selectionList)
-        }
+        });
 
         this.template.id = this.templateInfo.id;
+        this.setBackgroundImage(this.template.id);
+      },
 
-        const imgUrl = `${this.apiUrl}/public/images/${this.templateInfo.id}.png?dummy=${Math.random()}`;
-        this.pdfTemplate.style.backgroundImage = `url(${imgUrl})`;
+      async setBackgroundImage(templateId){
+        const dummyData = `?dummy=${Math.random()}`; // used to force browser to reload image
+        const imageUrl = `${this.apiUrl}/public/templates/${templateId}/background.png/${dummyData}`
+
+        try{
+          const response = await fetch(imageUrl);
+          if(response.ok){
+            this.pdfTemplate.style.backgroundImage = `url(${imageUrl})`;
+          }
+        }catch(error){
+          this.pdfTemplate.style.backgroundImage = "";
+        }
       },
 
       async getUUID(){
