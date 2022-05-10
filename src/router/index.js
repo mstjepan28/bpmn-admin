@@ -5,10 +5,6 @@ import SearchInstances from '../views/SearchInstances.vue';
 import ProcessInstance from '../views/ProcessInstance.vue';
 import Models from '../views/Models.vue';
 
-import templates from '../views/templates.vue';
-import templatesCreate from '../views/createTemplate.vue';
-import templatesEdit from '../views/editTemplate.vue';
-
 Vue.use(VueRouter);
 
 const routes = [
@@ -33,20 +29,22 @@ const routes = [
         name: 'instances',
         component: SearchInstances,
     },
+
+    // TEMPLATE ENGINE ROUTES
     {
         path: '/templates',
         name: 'templates',
-        component: templates,
+        component: () => import("../templateEngine/views/Templates.vue"),
     },
     {
         path: '/templates/create',
-        name: 'createTemplate',
-        component: templatesCreate,
+        name: 'templates-create',
+        component: () => import("../templateEngine/views/TemplateCreate.vue"),
     },
     {
         path: '/templates/edit/:templateId',
-        name: 'editTemplate',
-        component: templatesEdit,
+        name: 'templates-edit',
+        component: () => import("../templateEngine/views/TemplateEdit.vue"),
     },
 
 ];

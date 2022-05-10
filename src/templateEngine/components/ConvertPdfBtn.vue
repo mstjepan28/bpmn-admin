@@ -7,7 +7,8 @@
 
 <script>
 import axios from "axios";
-import BaseButton from "./baseButton.vue";
+
+import BaseButton from "./BaseButton.vue";
 
 export default {
   props:{

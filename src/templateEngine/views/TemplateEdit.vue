@@ -8,7 +8,7 @@
 
 <script>
 import axios from "axios";
-import PdfBuilder from "../pdfBuilder/pdfBuilder.vue";
+import PdfBuilder from "../components/PdfBuilder.vue";
 
 export default {
   components: { PdfBuilder },

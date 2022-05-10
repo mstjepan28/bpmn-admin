@@ -86,7 +86,8 @@ export default {
     computed:{
         isPageTemplateBuilder(){
             const route = this.$route.name;
-            return route == "createTemplate" || route == "editTemplate";
+            console.log(this.$router)
+            return route == "templates-create" || route == "templates-edit";
         }
     }
 };
