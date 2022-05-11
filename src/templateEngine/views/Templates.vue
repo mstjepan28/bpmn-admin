@@ -11,9 +11,12 @@
       hide-details
       prepend-icon="mdi-magnify"
       single-line
+      label="Search..."
+      v-model="searchText"
+      @input="searchTemplates"
     ></v-text-field>
 
-    <v-simple-table v-if="templateList.length >= 1">
+    <v-simple-table v-if="templateListFiltered.length >= 1">
       <thead>
         <tr>
           <th class="text-left">
@@ -38,7 +41,7 @@
       </thead>
 
       <tbody>
-        <tr :key="template.id" v-for="template in templateList">
+        <tr :key="template.id" v-for="template in templateListFiltered">
           <td>{{ template.name }}</td>
           
           <td>{{ template.created_by }}</td>
@@ -78,17 +81,21 @@
 import axios from "axios";
 import dayjs from "dayjs";
 
+import { fuzzySearch } from "../util/fuzzySearch";
+
 export default {
   data () {
     return {
       selectedTemplate: null,
       baseURL: 'http://localhost:5500',
       templateList: [],
+      templateListFiltered: [],
 
       sorting: {
         sortBy: 'name',
         sortOrder: 'desc'
-      }
+      },
+      searchText: "",
     }
   },
   methods: {
@@ -113,6 +120,25 @@ export default {
       }catch(error){
         console.log(error);
       }
+    },
+
+    searchTemplates(){
+      if(this.searchText == "" || this.templateList.length < 1) {
+        return this.templateListFiltered = this.templateList;
+      }
+      if(this.searchText.length < 3) {
+        return;
+      }
+
+      this.templateListFiltered = this.templateList.filter(template => {
+        const searchTextLowercase = this.searchText.toLowerCase();
+        const searchByKeys = ["name"];
+
+        for(let key of searchByKeys) {
+          const isFound = fuzzySearch(searchTextLowercase, template[key].toLowerCase());
+          if(isFound) return true;
+        }
+      })
     },
 
     sortTemplates(sortBy){
@@ -140,15 +166,17 @@ export default {
       }
     },
 
-  async fetchTemplates() {
-    try{
-      const response = await axios.get(`${this.baseURL}/templates`);
-      this.templateList = response.data;
-      this.sortTemplates('updated_at');
-    }catch(error){
-      console.log(error)
+    async fetchTemplates() {
+      try{
+        const response = await axios.get(`${this.baseURL}/templates`);
+        this.templateList = response.data;
+
+        this.sortTemplates('updated_at');
+        this.searchTemplates();
+      }catch(error){
+        console.log(error)
+      }
     }
-  }
   },
 
   async mounted(){
