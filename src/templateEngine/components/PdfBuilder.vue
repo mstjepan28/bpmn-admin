@@ -9,12 +9,6 @@
         {{drawButtonText}}
       </button>
       
-      <ConvertPdfBtn 
-        :apiUrl="apiUrl"
-        :template="template"
-        :pdfTemplateBuffer="pdfTemplateBuffer"
-        @openResponse="openResponsePopup"
-      />
       <SaveTemplateButton 
         :apiUrl="apiUrl"
         :isNewTemplate="isNewTemplate"
@@ -37,6 +31,10 @@
         :isDisabled="!showContentPreview" 
         :toggleID="'previewToggle'"
         @toggled="toggleContentPreview"
+      />
+
+      <VariableEditor
+        :templateVariables="template.variableList"
       />
     </div>
 
@@ -70,12 +68,11 @@ import interact from "interactjs";
 import axios from "axios";
 
 import EditElement   from "./EditElement.vue";
-import ConvertPdfBtn from "./ConvertPdfBtn.vue"
 import SaveTemplateButton from "./SaveTemplateButton.vue";
 import PdfToImage    from "./PdfToImage.vue";
 import ResponsePopup from "./ResponsePopup.vue";
 import ToggleSwitch from "./ToggleSwitch.vue";
-
+import VariableEditor from "./VariableEditor.vue";
 
 export default {
   props:{
@@ -88,7 +85,7 @@ export default {
       required: false
     }
   },
-  components: { EditElement, ConvertPdfBtn, PdfToImage, ResponsePopup, ToggleSwitch, SaveTemplateButton },
+  components: { EditElement, PdfToImage, ResponsePopup, ToggleSwitch, SaveTemplateButton, VariableEditor },
   data(){
     return{
       pdfTemplate: null, // dom element 
@@ -111,7 +108,8 @@ export default {
         pdfDimensions: null,
         name: "New template",
         tags: [],
-        selectionList: []
+        selectionList: [],
+        variableList: []
       }
     }
   },
