@@ -12,15 +12,20 @@
     </form>
 
     <div class="variableList">
-      <div class="variable" :key="variable.name" v-for="variable in variableList">
-        {{ variable.name }}
-      </div>
+      <VariableInstance 
+        v-for="variable in variableList"
+        :key="variable.name"
+        :variable="variable"
+        @deleteVariable="deleteVariable"
+        @typeSelected="updateType"
+      />
     </div>
     
   </div>
 </template>
 
 <script>
+import VariableInstance from './VariableInstance.vue';
 
 export default {
   props: {
@@ -29,23 +34,63 @@ export default {
       required: true
     }
   },
+  components: { VariableInstance },
   data() {
     return {
       newVariable: "",
-      variableList: [],
+
+      variableList: [
+        {name: "one", type: 'text'},
+        {name: "two", type: 'text'},
+        {name: "three", type: 'text'},
+        {name: "four", type: 'text'},
+        {name: "five", type: 'text'},
+        {name: "six", type: 'text'},
+        {name: "seven", type: 'text'},
+        {name: "eight", type: 'text'},
+        {name: "nine", type: 'text'},
+        {name: "ten", type: 'text'},
+        {name: "eleven", type: 'text'},
+        {name: "twelve", type: 'text'},
+        {name: "thirteen", type: 'text'},
+        {name: "fourteen", type: 'text'},
+        {name: "fifteen", type: 'text'},
+        {name: "sixteen", type: 'text'},
+        {name: "seventeen", type: 'text'},
+        {name: "eighteen", type: 'text'},
+        {name: "nineteen", type: 'text'},
+      ],
     }
   },
   methods: {
+    doesVariableExist() {
+      const foundElement = this.variableList.find(variable => variable.name === this.newVariable);
+      return !!foundElement;
+    },
+
     addVariable() {
-      this.variableList.push({
-        name: this.newVariable,
-      })
+      if(!this.doesVariableExist()) {
+        this.variableList.push({
+          name: this.newVariable,
+          type: 'text'
+        })
+      }
+
       this.newVariable = "";
-      console.log(this.variableList)
+    },
+    updateType(updateVariable) {
+      this.variableList.forEach(variable => {
+        if (variable.name === updateVariable.name) {
+          variable.type = updateVariable.type;
+        }
+      });
+    },
+    deleteVariable(variable) {
+      this.variableList = this.variableList.filter(v => v.name !== variable.name);
     }
   },
   mounted() {
-    this.variableList = this.templateVariables;
+    //this.variableList = this.templateVariables;
   }
 }
 </script>
@@ -60,6 +105,18 @@ export default {
     width: 100%;
     margin-top: 16px;
     margin-bottom: 16px;
+    border-bottom: 1px solid $secondaryColor
+  }
+}
+
+.variableList{
+  max-height: 15rem;
+  min-height: 15rem;
+  overflow-y: auto;
+
+  scrollbar-width: none;
+  &::-webkit-scrollbar { 
+    display: none;  
   }
 }
 </style>
