@@ -44,42 +44,44 @@
           />
         </div>
 
-        <h3 class="sectionTitle">Data type: </h3>
-        <div class="dataTypeSelection">
-          <label for="elementText" class="primaryButton" :class="{activeType: elementType == 'singlelineText'}"> 
-            Text <input type="radio" id="elementText" name="elementType" value="singlelineText" v-model="elementType">
-          </label>
-          <label for="elementParagraph" class="primaryButton" :class="{activeType: elementType == 'paragraph'}"> 
-            Paragraph <input type="radio" id="elementParagraph" name="elementType" value="paragraph" v-model="elementType">
-          </label>
-          <label for="elementImage" class="primaryButton" :class="{activeType: elementType == 'image'}"> 
-            Image <input type="radio" id="elementImage" name="elementType" value="image" v-model="elementType">
-          </label>
-        </div>
-
-        <h3 class="sectionTitle">Static content</h3>
         <div v-if="element.isStatic">
-            <div v-if="element.type == 'singlelineText'" class="staticInput">
-              <h3><label for="singleLineTextInput">Input text: </label></h3>
-              <input id="singleLineTextInput" class="textInput" type="text" v-model="staticContent" placeholder="Write single line text here..."/>
-            </div>
-            <div v-if="element.type == 'paragraph'" class="staticInput">
-              <h3><label for="paragraphInput">Input text: </label></h3>
-              <textarea id="paragraphInput" class="paragraphInput" v-model="staticContent" placeholder="Write your paragraph here..."></textarea>
-            </div>
-            <div v-if="element.type == 'image'" class="staticInput">
-              <h3><label for="imageURLInput">Image URL: </label></h3>
-              <textarea id="imageURLInput" class="paragraphInput" v-model="staticContent" placeholder="Insert link to an image here..."></textarea>
-            </div>
+          <h3 class="sectionTitle">Data type: </h3>
+          <div class="dataTypeSelection">
+            <label for="elementText" class="primaryButton" :class="{activeType: elementType == 'singlelineText'}"> 
+              Text <input type="radio" id="elementText" name="elementType" value="singlelineText" v-model="elementType">
+            </label>
+            <label for="elementParagraph" class="primaryButton" :class="{activeType: elementType == 'paragraph'}"> 
+              Paragraph <input type="radio" id="elementParagraph" name="elementType" value="paragraph" v-model="elementType">
+            </label>
+            <label for="elementImage" class="primaryButton" :class="{activeType: elementType == 'image'}"> 
+              Image <input type="radio" id="elementImage" name="elementType" value="image" v-model="elementType">
+            </label>
+          </div>
+
+          <div v-if="element.type == 'singlelineText'" class="staticInput">
+            <h3><label for="singleLineTextInput">Input text: </label></h3>
+            <input id="singleLineTextInput" class="textInput" type="text" v-model="staticContent" placeholder="Write single line text here..."/>
+          </div>
+          <div v-if="element.type == 'paragraph'" class="staticInput">
+            <h3><label for="paragraphInput">Input text: </label></h3>
+            <textarea id="paragraphInput" class="paragraphInput" v-model="staticContent" placeholder="Write your paragraph here..."></textarea>
+          </div>
+          <div v-if="element.type == 'image'" class="staticInput">
+            <h3><label for="imageURLInput">Image URL: </label></h3>
+            <textarea id="imageURLInput" class="paragraphInput" v-model="staticContent" placeholder="Insert link to an image here..."></textarea>
+          </div>
         </div>
         <div v-else class="variableDropdown">
-          <h3><label for="variables">Choose a variable:</label></h3>
+          <h3 class="sectionTitle">
+            <label for="variables">Choose a variable:</label>
+          </h3>
+
           <select id="variables" v-model="element.variable" @change="variableChange">
             <option 
               :key="variable.value"
-              v-for="variable in templateVariables" 
+              v-for="variable in variableList" 
               :value="variable.value"
-            >{{variable.label}}</option>
+            >{{variable.name}}</option>
           </select>
         </div>
 
@@ -118,6 +120,10 @@ export default {
       type: Number,
       required: true,
     },
+    variableList: {
+      type: Array,
+      required: false
+    },
     preview: {
       type: Object,
       required: false
@@ -134,9 +140,6 @@ export default {
       
       staticContent: "",
       elementType: "",
-
-      // TODO: handle variables
-      templateVariables: [], 
     }
   },
   computed:{
@@ -160,8 +163,12 @@ export default {
     /* ------------------------------------------------------------ */
   },
   methods:{
-    variableChange() {
-      if(!this.preview.enabled) return;
+    variableChange(event) {
+      console.log(event)
+      if(!this.preview.enabled) {
+        //this.elementType = this.ele
+        return;
+      }
 
       const value = this.preview.previewData[this.element.variable];
       this.element.elementRef.innerText = value || "";
@@ -277,10 +284,10 @@ export default {
     updateStaticContent(){
       this.element.staticContent = this.staticContent;
 
-      if(this.elementType == "image") 
+      if(this.elementType == "image") {
         return this.element.internalComponent.setImageURL(this.staticContent);
+      }
 
-      console.log(3)
       this.element.elementRef.innerText = this.staticContent || "";
     },
 
@@ -328,11 +335,10 @@ export default {
       this.$emit("deleteElement", this.element);
     },
   },
-  async mounted(){
+  mounted(){
     this.pdfTemplate = document.getElementById("pdfTemplate");
   },
   watch:{
-    // When selected element gets changed, check its movable 
     element(){
       if(!this.element) return;
 
@@ -351,7 +357,9 @@ export default {
     },
 
     elementType(){
-      if(!this.elementType || this.newElementMounted) return;
+      if(!this.elementType || this.newElementMounted) {
+        return;
+      }
       if(this.elementType != "image") {
         this.destroyComponent();
       }
@@ -456,6 +464,7 @@ export default {
   @include flex(row, space-between, initial);
   column-gap: 0.25rem;
   margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
 
   label{
     @include flex(row, center, center);

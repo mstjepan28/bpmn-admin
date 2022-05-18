@@ -38,28 +38,7 @@ export default {
   data() {
     return {
       newVariable: "",
-
-      variableList: [
-        {name: "one", type: 'text'},
-        {name: "two", type: 'text'},
-        {name: "three", type: 'text'},
-        {name: "four", type: 'text'},
-        {name: "five", type: 'text'},
-        {name: "six", type: 'text'},
-        {name: "seven", type: 'text'},
-        {name: "eight", type: 'text'},
-        {name: "nine", type: 'text'},
-        {name: "ten", type: 'text'},
-        {name: "eleven", type: 'text'},
-        {name: "twelve", type: 'text'},
-        {name: "thirteen", type: 'text'},
-        {name: "fourteen", type: 'text'},
-        {name: "fifteen", type: 'text'},
-        {name: "sixteen", type: 'text'},
-        {name: "seventeen", type: 'text'},
-        {name: "eighteen", type: 'text'},
-        {name: "nineteen", type: 'text'},
-      ],
+      variableList: [],
     }
   },
   methods: {
@@ -84,13 +63,16 @@ export default {
           variable.type = updateVariable.type;
         }
       });
+
+      this.$emit('updateVariables', this.variableList);
     },
     deleteVariable(variable) {
       this.variableList = this.variableList.filter(v => v.name !== variable.name);
+      this.$emit('updateVariables', this.variableList);
     }
   },
   mounted() {
-    //this.variableList = this.templateVariables;
+    this.variableList = this.templateVariables;
   }
 }
 </script>

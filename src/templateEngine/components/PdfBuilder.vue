@@ -35,6 +35,7 @@
 
       <VariableEditor
         :templateVariables="template.variableList"
+        @updateVariables="updateVariableList"
       />
     </div>
 
@@ -52,6 +53,7 @@
         :apiUrl="apiUrl" 
         :element="selectedElement"
         :minElementSize="minElementSize"
+        :variableList="template.variableList"
         :preview="{
             previewData,
             enabled: showContentPreview
@@ -646,7 +648,11 @@ export default {
           ...processedTemplate,
           selectionList: this.template.selectionList
         }
-      }
+      },
+
+      updateVariableList(variableList) {
+        this.template.variableList = variableList;
+      },
   },
   async mounted(){
     this.interaction();
