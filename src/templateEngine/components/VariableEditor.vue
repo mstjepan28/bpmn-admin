@@ -71,8 +71,10 @@ export default {
       this.$emit('updateVariables', this.variableList);
     }
   },
-  mounted() {
-    this.variableList = this.templateVariables;
+  watch: {
+    templateVariables() {
+      this.variableList = this.templateVariables;
+    }
   }
 }
 </script>

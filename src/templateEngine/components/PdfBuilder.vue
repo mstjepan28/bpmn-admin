@@ -581,6 +581,7 @@ export default {
         });
 
         this.template.id = this.templateInfo.id;
+        this.template.variableList = this.templateInfo.variable_list;
         this.setBackgroundImage(this.template.id);
       },
 
@@ -670,7 +671,7 @@ export default {
     }
 
     document.addEventListener('keydown', this.keyboardSupport);
-    this.pdfTemplate.addEventListener("click", this.selectElementOnClick)
+    this.pdfTemplate.addEventListener("click", this.selectElementOnClick);
   },
   beforeDestroy(){
     document.removeEventListener('keydown', this.keyboardSupport);
