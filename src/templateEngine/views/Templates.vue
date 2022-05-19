@@ -61,7 +61,7 @@
             </span>
 
             <span v-else>
-              <button type="button" @click="selectedTemplate = template.id">Delete</button>
+              <button type="button" @click="selectToDelete(template.id)">Delete</button>
             </span>
           </td>
         </tr>
@@ -102,21 +102,28 @@ export default {
     formateDateTime(timestamp) {
       return dayjs(timestamp).format('YYYY-MM-DD HH:mm:ss');
     },
+    
     editTemplate(templateId){
-      this.$router.push(`/templates/edit/${templateId}`)
+      this.$router.push(`/templates/edit/${templateId}`);
     },
+    
     selectToDelete(templateId){
       this.selectedTemplate = templateId;
     },
+    
     cancelDelete(){
       this.selectedTemplate = null;
     },
+
     async deleteTemplate(){
       try{
         await axios.delete(`${this.baseURL}/templates?id=${this.selectedTemplate}`);
 
-        this.templateList = this.templateList.filter(template => template.id != this.selectedTemplate);
-        this.selectToDelete = null;
+        this.templateList = this.templateList.filter(template => template.id !== this.selectedTemplate);
+        this.selectedTemplate = null;
+
+        this.sortTemplates();
+        this.searchTemplates();
       }catch(error){
         console.log(error);
       }
