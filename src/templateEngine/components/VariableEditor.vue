@@ -56,6 +56,7 @@ export default {
       }
 
       this.newVariable = "";
+      this.$emit('updateVariables', this.variableList);
     },
     updateType(updateVariable) {
       this.variableList.forEach(variable => {
