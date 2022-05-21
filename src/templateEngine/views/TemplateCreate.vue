@@ -18,13 +18,17 @@ import PdfBuilder from "../components/PdfBuilder.vue";
 
 export default {
   components: { VariableEdit, Modal, PdfBuilder },
-  mounted() {
-    this.$store.commit("setModalRef", {
-      name: "variableModal",
-      ref: this.$refs.variableModal,
-    });
-
+  methods: {
+    setVariableModalRef(){
+      this.$store.commit("setModalRef", {
+        name: "variableModal",
+        ref: this.$refs.variableModal,
+      });
+    },
   },
+  mounted() {
+    this.setVariableModalRef();
+  }
 }
 
 </script>
