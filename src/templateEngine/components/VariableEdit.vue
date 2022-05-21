@@ -7,6 +7,7 @@
         class="variable-input-name"
         v-model="variable.name"
         placeholder="Variable name"
+        disabled
       />
       
       <input

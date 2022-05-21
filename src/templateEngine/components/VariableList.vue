@@ -55,7 +55,7 @@ export default {
       if(!this.doesVariableExist()) {
         this.variableList.unshift({
           name: this.newVariable,
-          type: 'text'
+          type: 'singlelineText'
         })
       }
 
@@ -74,13 +74,15 @@ export default {
     },
     
     updateType(updateVariable) {
-      this.variableList.forEach(variable => {
+      this.variableList = this.variableList.map(variable => {
         if (variable.name === updateVariable.name) {
-          variable.type = updateVariable.type;
+          return updateVariable;
         }
+        return variable;
       });
 
       this.$emit('updateVariables', this.variableList);
+      this.closeVariableModal();
     },
 
     deleteVariable(variable) {
