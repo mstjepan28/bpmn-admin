@@ -209,10 +209,11 @@ export default {
         x += parseInt(event.deltaRect.left)
         y += parseInt(event.deltaRect.top)
 
-        target.style.transform = `translate(${x}px, ${y}px)`
+        target.style.transform = `translate(${x}px, ${y}px)`;
+        this.updatePositionData(target, {x, y})
 
-        target.setAttribute('data-x', x)
-        target.setAttribute('data-y', y)
+        target.setAttribute('data-x', x);
+        target.setAttribute('data-y', y);
       },
 
       /* ------------------------------------------------------------ */
@@ -441,8 +442,11 @@ export default {
       // newData - either (x ,y) or (width, height)
       // Get the element from the list based on the data-index attribute. Replace the old (x ,y) or (width, height) with new ones
       updatePositionData(element, newData){
-        const elementObj = this.getElementFromList(element)
-        Object.keys(newData).forEach(key => elementObj.positionData[key] = newData[key])
+        const elementObj = this.getElementFromList(element);
+
+        Object.keys(newData).forEach(key => {
+          elementObj.positionData[key] = newData[key]
+        })
       },
 
       setPdfTemplate(pdfTemplateBuffer, pdfDimensions){
@@ -456,7 +460,9 @@ export default {
       },
 
       modifyPositionData(modifyBy){
-        if(!this.selectedElement) return;
+        if(!this.selectedElement) {
+          return;
+        }
         this.$refs.editElement.modifyPositionData(modifyBy)
       },
 

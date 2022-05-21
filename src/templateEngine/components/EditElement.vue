@@ -163,10 +163,8 @@ export default {
     /* ------------------------------------------------------------ */
   },
   methods:{
-    variableChange(event) {
-      console.log(event)
+    variableChange() {
       if(!this.preview.enabled) {
-        //this.elementType = this.ele
         return;
       }
 
