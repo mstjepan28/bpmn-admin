@@ -105,6 +105,7 @@ export default {
     }
 }
 
+// stretches the content to the full width and height of the screen
 main.templateBuilderContainer{
     .v-main__wrap{
         display: flex;
