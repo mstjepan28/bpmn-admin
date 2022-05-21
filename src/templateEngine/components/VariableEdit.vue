@@ -27,8 +27,8 @@
       <button
         type="button"
         class="variable-type-select"
-        :class="{ selectedType: isSelectedType('text') }"
-        @click="selectType('text')"
+        :class="{ selectedType: isSelectedType('singlelineText') }"
+        @click="selectType('singlelineText')"
       >
         Text
       </button>
@@ -98,7 +98,8 @@ export default {
   },
   watch: {
     variableData() {
-      this.variable = this.variableData;
+      // Creating new object so changes are not reflected in the original object
+      this.variable = {...this.variableData};
     },
   },
 };
