@@ -12,20 +12,20 @@
     </form>
 
     <div class="variableList">
-      <VariableInstance 
+      <button 
+        type="button" 
+        class="variable"
+
+        :key="variable.name" 
         v-for="variable in variableList"
-        :key="variable.name"
-        :variable="variable"
-        @deleteVariable="deleteVariable"
-        @typeSelected="updateType"
-      />
+        @click="openVariableModal(variable)"
+      >{{ variable.name }}</button>
     </div>
     
   </div>
 </template>
 
 <script>
-import VariableInstance from './VariableInstance.vue';
 
 export default {
   props: {
@@ -34,11 +34,15 @@ export default {
       required: true
     }
   },
-  components: { VariableInstance },
   data() {
     return {
       newVariable: "",
       variableList: [],
+    }
+  },
+  computed: {
+    changingVariable() {
+      return this.$store.getters.getUpdatedVariable;
     }
   },
   methods: {
@@ -49,7 +53,7 @@ export default {
 
     addVariable() {
       if(!this.doesVariableExist()) {
-        this.variableList.push({
+        this.variableList.unshift({
           name: this.newVariable,
           type: 'text'
         })
@@ -58,6 +62,17 @@ export default {
       this.newVariable = "";
       this.$emit('updateVariables', this.variableList);
     },
+
+    openVariableModal(variable) {
+      const variableModal = this.$store.getters.getModalRefByName("variableModal");
+      variableModal.openModal(variable);
+    },
+
+    closeVariableModal() {
+      const variableModal = this.$store.getters.getModalRefByName("variableModal");
+      variableModal.closeModal();
+    },
+    
     updateType(updateVariable) {
       this.variableList.forEach(variable => {
         if (variable.name === updateVariable.name) {
@@ -67,14 +82,30 @@ export default {
 
       this.$emit('updateVariables', this.variableList);
     },
+
     deleteVariable(variable) {
       this.variableList = this.variableList.filter(v => v.name !== variable.name);
       this.$emit('updateVariables', this.variableList);
+      this.closeVariableModal();
     }
   },
   watch: {
     templateVariables() {
       this.variableList = this.templateVariables;
+    },
+
+    changingVariable() {
+      if(!this.changingVariable) {
+        return;
+      }
+      else if(this.changingVariable.delete) {
+        this.deleteVariable(this.changingVariable);
+      }
+      else {
+        this.updateType(this.changingVariable);
+      }
+
+      this.$store.commit('setUpdateVariable', null);
     }
   }
 }
@@ -103,5 +134,18 @@ export default {
   &::-webkit-scrollbar { 
     display: none;  
   }
+}
+
+.variable{
+  width: 100%;
+
+  padding: 0.25rem;
+
+  font-weight: bold;
+  text-align: start;
+
+  overflow-x: hidden;
+
+  border-bottom: 1px solid $secondaryColor;
 }
 </style>

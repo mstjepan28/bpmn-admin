@@ -33,7 +33,7 @@
         @toggled="toggleContentPreview"
       />
 
-      <VariableEditor
+      <VariableList
         :templateVariables="template.variableList"
         @updateVariables="updateVariableList"
       />
@@ -74,7 +74,7 @@ import SaveTemplateButton from "./SaveTemplateButton.vue";
 import PdfToImage    from "./PdfToImage.vue";
 import ResponsePopup from "./ResponsePopup.vue";
 import ToggleSwitch from "./ToggleSwitch.vue";
-import VariableEditor from "./VariableEditor.vue";
+import VariableList from "./VariableList.vue";
 
 export default {
   props:{
@@ -87,7 +87,7 @@ export default {
       required: false
     }
   },
-  components: { EditElement, PdfToImage, ResponsePopup, ToggleSwitch, SaveTemplateButton, VariableEditor },
+  components: { EditElement, PdfToImage, ResponsePopup, ToggleSwitch, SaveTemplateButton, VariableList },
   data(){
     return{
       pdfTemplate: null, // dom element 
