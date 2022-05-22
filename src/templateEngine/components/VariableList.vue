@@ -52,12 +52,16 @@ export default {
     },
 
     addVariable() {
-      if(!this.doesVariableExist()) {
-        this.variableList.unshift({
-          name: this.newVariable,
-          type: 'singlelineText'
-        })
+      this.newVariable = this.newVariable.trim();
+
+      if(this.newVariable.length > 0 && !this.doesVariableExist()) {
+        return;
       }
+      
+      this.variableList.unshift({
+        name: this.newVariable,
+        type: 'singlelineText'
+      })
 
       this.newVariable = "";
       this.$emit('updateVariables', this.variableList);
