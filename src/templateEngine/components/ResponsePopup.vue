@@ -72,12 +72,15 @@ export default {
     },
 
     openPopup(){
+      if(this.closeTimeout) {
+        clearTimeout(this.closeTimeout);
+        this.closeTimeout = null;
+      }
+      this.closeTimeout = setTimeout(() => this.closePopup(), 2500)
       const popup = document.querySelector("div.feedbackPopup");
 
       popup.classList.add("slideDown");
       popup.classList.remove("slideUp");
-
-      if(!this.closeTimeout) setTimeout(() => this.closePopup(), 2500)
     },
     closePopup(){
       if(this.closeTimeout){
@@ -90,7 +93,12 @@ export default {
       popup.classList.add("slideUp");
       popup.classList.remove("slideDown");
     }
-  }
+  },
+  beforeDestroy() {
+    if(this.closeTimeout) {
+      clearTimeout(this.closeTimeout);
+    }
+  },
 }
 </script>
 
