@@ -1,6 +1,10 @@
 <template>
   <div class="componentContainer">
     <div class="colContent leftCol">
+      <TemplateNameEdit
+        :template="template"
+      />
+
       <button 
         class="primaryButton drawingToggleButton" 
         :class="{activeDrawing: selectionCreation.drawHandler}"
@@ -74,6 +78,7 @@ import SaveTemplateButton from "./SaveTemplateButton.vue";
 import PdfToImage    from "./PdfToImage.vue";
 import ToggleSwitch from "./ToggleSwitch.vue";
 import VariableList from "./VariableList.vue";
+import TemplateNameEdit from "./TemplateNameEdit.vue";
 
 export default {
   props:{
@@ -86,9 +91,10 @@ export default {
       required: false
     }
   },
-  components: { EditElement, PdfToImage, ToggleSwitch, SaveTemplateButton, VariableList },
+  components: { EditElement, PdfToImage, ToggleSwitch, SaveTemplateButton, VariableList, TemplateNameEdit },
   data(){
     return{
+      editTemplateName: false,
       pdfTemplate: null, // dom element 
       minElementSize: 15, // minimum size to which an element can be resized
       selectionCreation: { 
@@ -582,6 +588,7 @@ export default {
         });
 
         this.template.id = this.templateInfo.id;
+        this.template.name = this.templateInfo.name;
         this.template.variableList = this.templateInfo.variable_list;
         this.setBackgroundImage(this.template.id);
       },
@@ -590,6 +597,7 @@ export default {
         const dummyData = `?dummy=${Math.random()}`; // used to force browser to reload image
         const imageUrl = `${this.apiUrl}/public/templates/${templateId}/background.png/${dummyData}`
 
+        // TODO: fix this so it doesn't log an error when the image is not found
         try{
           const response = await fetch(imageUrl);
           if(response.ok){
@@ -629,7 +637,9 @@ export default {
           const previewValue = preview[selection.variable] || "";
 
           // TODO: make preview of images
-          if(selection.type == 'image') continue;
+          if(selection.type == 'image') {
+            continue;
+          }
           selection.elementRef.innerHTML = previewValue;
           selection.staticContent = previewValue;
         }

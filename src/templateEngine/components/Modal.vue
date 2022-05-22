@@ -4,8 +4,17 @@
   class="modal-background"
   @click="closeModal"
 >
-  <div class="modal" @click.stop>
+  <div 
+    class="modal"
+    :class="{
+      'adjustable-width': autoWidth,
+    }"
+    @click.stop
+  >
     <div class="modal-header">
+      <span class="header-text">
+        {{ header }}
+      </span>
       <button type="button" @click="closeModal">X</button>
     </div>
     
@@ -23,7 +32,19 @@ export default {
     id: {
       required: true,
       type: String
-    }
+    },
+    forceShow: { 
+      required: false,
+      type: Boolean,
+    },
+    autoWidth: {
+      required: false,
+      type: Boolean,
+    },
+    header: {
+      required: false,
+      type: String,
+    },
   },
   data() {
     return {
@@ -74,6 +95,18 @@ export default {
       this.isModalOpen = false;
       document.getElementById(this.id).style.display = "none";
     },
+
+    forceShowModal() {
+      if(!this.forceShow) {
+        return;
+      }
+
+      this.isModalOpen = true;
+      document.getElementById(this.id).style.display = "block";
+    },
+  },
+  mounted() {
+    this.forceShowModal();
   },
 }
 </script>
@@ -94,9 +127,12 @@ export default {
   z-index: 10;
   
   background-color: rgba(0, 0, 0, 0.5);
+
+  .adjustable-width{
+    width: auto;
+
+  }
 }
-
-
 .modal {
   width: 50%;
   max-width: 600px;
@@ -118,10 +154,15 @@ export default {
 
 .modal-header {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
 
   padding: 0.5rem 1rem;
+
+  .header-text {
+    font-size: 18px;
+    font-weight: 500;
+  }
 }
 
 .modal-body{

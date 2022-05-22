@@ -2,11 +2,11 @@ export default {
   state: {
     modalRef: {
       variableModal: null,
-      templateNameModal: null,
+      additionalDataModal: null,
       responsePopup: null,
     },
     
-    updatedVariable: null
+    updatedVariable: null,
   },
   getters: {
     getModalRefByName: state => name => {

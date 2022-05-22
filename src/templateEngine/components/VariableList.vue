@@ -144,14 +144,9 @@ export default {
 }
 
 .variableList{
-  max-height: 15rem;
-  min-height: 15rem;
+  @include hideScroll();
+  max-height: 12rem;
   overflow-y: auto;
-
-  scrollbar-width: none;
-  &::-webkit-scrollbar { 
-    display: none;  
-  }
 }
 
 .variableList-empty{

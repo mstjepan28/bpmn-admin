@@ -1,6 +1,10 @@
 <template>
 <div class="wrapper">
-  <Modal id="variableModal" ref="variableModal">
+  <Modal 
+    header="Edit variable" 
+    id="variableModal" 
+    ref="variableModal"
+  >
     <VariableEdit/>
   </Modal>
 
@@ -18,7 +22,6 @@
 import ResponsePopup from "../components/ResponsePopup.vue";
 import Modal from "../components/Modal.vue";
 import VariableEdit from "../components/VariableEdit.vue";
-
 import PdfBuilder from "../components/PdfBuilder.vue";
 
 export default {
