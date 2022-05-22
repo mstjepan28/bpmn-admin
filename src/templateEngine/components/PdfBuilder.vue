@@ -5,7 +5,11 @@
     />
 
     <div class="colContent leftCol">
-      <button class="primaryButton drawingToggleButton" @click="drawSelection()" :class="{activeDrawing: selectionCreation.drawHandler}">
+      <button 
+        class="primaryButton drawingToggleButton" 
+        :class="{activeDrawing: selectionCreation.drawHandler}"
+        @click="drawSelection()" 
+      >
         {{drawButtonText}}
       </button>
       
@@ -698,7 +702,6 @@ export default {
 
   &:hover, &:focus{
     color: $primaryColor;
-    border: none;
     background: $blueHighlight;
   }
 }

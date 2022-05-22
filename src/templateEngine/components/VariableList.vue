@@ -1,17 +1,18 @@
 <template>
   <div class="variableEditorContainer">
-    <h2>Variables:</h2>
+    <h3 class="variableTitle">Variables:</h3>
 
-    <form  @submit.prevent="addVariable">
+    <form @submit.prevent="addVariable" class="variable-form">
       <input 
-        class="newVariableInput"
+        class="variable-form-input"
         type="text" 
-        placeholder="Add new variable name..."
+        placeholder="New variable name..."
         v-model="newVariable"
       />
+      <button type="submit" class="primaryButton"> Add </button>
     </form>
 
-    <div class="variableList">
+    <div v-if="variableList.length > 0" class="variableList">
       <button 
         type="button" 
         class="variable"
@@ -21,7 +22,10 @@
         @click="openVariableModal(variable)"
       >{{ variable.name }}</button>
     </div>
-    
+    <div v-else class="variableList-empty">
+      <h4>No variables to show...</h4>
+    </div>
+
   </div>
 </template>
 
@@ -46,20 +50,20 @@ export default {
     }
   },
   methods: {
-    doesVariableExist() {
-      const foundElement = this.variableList.find(variable => variable.name === this.newVariable);
+    doesVariableExist(newVariable) {
+      const foundElement = this.variableList.find(variable => variable.name === newVariable);
       return !!foundElement;
     },
 
     addVariable() {
-      this.newVariable = this.newVariable.trim();
+      const variable = this.newVariable.trim();
 
-      if(this.newVariable.length > 0 && !this.doesVariableExist()) {
+      if(!variable.length || this.doesVariableExist(variable)) {
         return;
       }
       
       this.variableList.unshift({
-        name: this.newVariable,
+        name: variable,
         type: 'singlelineText'
       })
 
@@ -117,18 +121,26 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import "../styles/style.scss";
+
+.variableTitle {
+  margin-bottom: 0.5rem;
+}
 
 .variableEditorContainer{
   width: 100%;
+}
 
-  .newVariableInput {
-    width: 100%;
-    margin-top: 16px;
-    margin-bottom: 16px;
-    border-bottom: 1px solid $secondaryColor
-  }
+.variable-form {
+  display: flex;
+  flex-direction: row;
+  column-gap: 0.25rem;
+  
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.5rem;
+
+  border-bottom: 1px solid $secondaryColor;
 }
 
 .variableList{
@@ -140,6 +152,11 @@ export default {
   &::-webkit-scrollbar { 
     display: none;  
   }
+}
+
+.variableList-empty{
+  @include flex(row, center, center);
+  min-height: 5rem;
 }
 
 .variable{

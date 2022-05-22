@@ -106,7 +106,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import "../styles/style.scss";
 
 .variable-input {
@@ -124,7 +124,7 @@ export default {
     padding: 0.5rem;
 
     border-radius: 5px;
-    border: 1px solid #ccc;
+    border: 1px solid $highlightColor;
 
     &:focus, &:hover {
       border: 1px solid $blueHighlight;

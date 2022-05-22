@@ -15,10 +15,20 @@ button{
   cursor: pointer;
 }
 
-input, input:hover, input:focus,
-textarea, textarea:hover, textarea:focus{
-  border: none;
-  outline: none;
+input, textarea {
+  width: 100%;
+
+  resize: none;
+
+  padding: 0.25rem 0.5rem;
+
+  border-radius: 5px;
+  border: 1px solid $highlightColor;
+
+  &:focus, &:hover {
+    outline: none;
+    border: 1px solid $blueHighlight;
+  }
 }
 
 h2 {
@@ -32,57 +42,9 @@ h3 {
   @include button();
 }
 
-.textInput{
-  width: 100%;
-
-  padding: 0.25rem;
-  font-size: 12px;
-
-  border-top: none;
-  border-right: none;
-  border-left: none;
-  border-bottom: 1px solid $highlightColor;
-
-  background: $primaryColor;
-  
-  &:hover, &:focus{
-    background: $secondaryColor;
-    border-bottom: 1px solid $highlightColor;
-    
-    &::placeholder{ 
-      color: $highlightColor
-    }
-  }
-
-  &::placeholder{
-    color: $highlightColor
-  }
-}
-
-.paragraphInput{
-  width: 100%;
-  min-height: 5rem;
-  resize: none;
-
-  font-size: 12px;
-  
-  padding: 0.25rem;
-
-  border: 1px solid $highlightColor;
-  background: $primaryColor;
-
-  &:hover, &:focus{
-    background: $secondaryColor;
-    border: 1px solid $highlightColor;
-    
-    &::placeholder{
-      color: $highlightColor
-    }
-  }
-
-  &::placeholder{
-    color: $highlightColor
-  }
+.sectionTitle{
+  margin-top: 1rem;
+  margin-bottom: 0.25rem;
 }
 
 

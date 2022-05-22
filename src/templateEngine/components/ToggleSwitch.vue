@@ -1,9 +1,27 @@
 <template>
-  <button class="toggleSwitch toggleWrapper" type="button"  @click="toggle()" :class="{activeBorder: toggleState}">
-    <h3 v-if="labels" class="switchLabel" :class="{activeColor: toggleState}">{{toggleLabel}}</h3>
+  <button 
+    type="button"  
+    class="toggleSwitch toggleWrapper" 
+    :class="{active: toggleState}"
+    @click="toggle()" 
+  >
+    <h4 
+      v-if="labels" 
+      class="switchLabel" 
+      :class="{active: toggleState}"
+    >
+      {{toggleLabel}}
+    </h4>
 
-    <div class="switch" :class="{activeBackground: toggleState}">
-      <span class="circle" :id="'circle' + toggleID"></span>
+    <div 
+      class="switch" 
+      :class="{active: toggleState}"
+    >
+      <span 
+        :id="'circle' + toggleID"
+        class="circle"
+        :class="{active: toggleState}"
+      ></span>
     </div>
   </button>
 </template>
@@ -78,8 +96,8 @@ export default {
 @import "../styles/style.scss";
 
 $primary: $primaryColor;
-$secondary: $secondaryColor;
-$active: $blueHighlight;
+$secondary: $primaryColor;
+$activeColor: $blueHighlight;
 $disabled: $highlightColor;
 // *************************** //
 
@@ -87,6 +105,8 @@ $SliderSize: 15px;
 
 $SwitchWidth: 36px;
 $SwitchHeight: 20px;
+
+$borderWidth: 1.5px;
 
 .toggleWrapper{
   @include flex(row, space-between, center);
@@ -96,29 +116,32 @@ $SwitchHeight: 20px;
     margin: 0.5rem 0;
   }
 }
-.activeBorder{
-  &:hover, &:focus{
-    border: 1.5px solid $active !important;
-  }
-}
-.activeBackground{
-  background: $active !important;
-}
-.activeColor{
-  color: $active !important;
-}
 
 .toggleSwitch{
   padding: 0.25rem 0.5rem;
 
-  border-radius: 8px;
-  border: 1.5px solid transparent;
+  border-radius: 5px;
+  border: $borderWidth solid $disabled;
 
-  background: $secondary;
+  background-color: $primary;
 
   &:hover, &:focus{
-    border: 1.5px solid $disabled;
-    background: $secondary;
+    border: $borderWidth solid $activeColor;
+  }
+  
+  &.active{
+    border: $borderWidth solid $activeColor;
+    background-color: $activeColor;
+  }
+}
+
+.switchLabel{
+  color: $disabled;
+  font-weight: 500;
+  margin-right: 1rem;
+
+  &.active{
+    color: $primary !important;
   }
 }
 
@@ -130,7 +153,11 @@ $SwitchHeight: 20px;
 
   border-radius: 9999px;
 
-  background: $disabled;
+  background-color: $disabled;
+
+  &.active{
+    background-color: $primary;
+  }
 }
 
 .circle{
@@ -150,12 +177,11 @@ $SwitchHeight: 20px;
   border-radius: 9999px;
 
   background: $primary;
+
+  &.active{
+    background-color: $activeColor;
+  }
 }
 
-.switchLabel{
-  color: $disabled;
-  font-weight: 500;
-  margin-right: 1rem;
-}
 
 </style>

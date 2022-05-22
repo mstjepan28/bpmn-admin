@@ -1,19 +1,17 @@
 @mixin button(){
-  width: 100%;
-
-  font-size: 14px;
-  font-weight: 500;
-  color: $highlightColor;
+  padding: 0.25rem 1rem;
 
   cursor: pointer;
-  
-  border-radius: 8px;
-  border: 1.5px solid $highlightColor;
-  background: $secondaryColor;
 
-  &:hover, &:focus{
+  font-size: 16px;
+
+  border-radius: 5px;
+  border: 2px solid $secondaryColor;
+
+  &:hover, &:focus {
     color: $primaryColor;
-    background: $highlightColor
+    font-weight: 500;
+    background-color: $blueHighlight;
   }
 }
 

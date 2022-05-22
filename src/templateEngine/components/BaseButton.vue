@@ -41,7 +41,10 @@ export default {
   },
   methods: {
     async clickHandler(){
-      if(this.isProcessing) return;
+      if(this.isProcessing) {
+        return;
+      }
+      
       this.isProcessing = true;
       document.documentElement.style.cursor = "wait"
 
@@ -54,7 +57,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import "../styles/style.scss";
 
 .convertButton{

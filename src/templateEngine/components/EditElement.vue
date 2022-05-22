@@ -47,28 +47,38 @@
         <div v-if="element.isStatic">
           <h3 class="sectionTitle">Data type: </h3>
           <div class="dataTypeSelection">
-            <label for="elementText" class="primaryButton" :class="{activeType: elementType == 'singlelineText'}"> 
+            <label for="elementText" class="primaryButton typeButton-text" :class="{activeType: elementType == 'singlelineText'}"> 
               Text <input type="radio" id="elementText" name="elementType" value="singlelineText" v-model="elementType">
             </label>
-            <label for="elementParagraph" class="primaryButton" :class="{activeType: elementType == 'paragraph'}"> 
+
+            <label for="elementParagraph" class="primaryButton typeButton-paragraph" :class="{activeType: elementType == 'paragraph'}"> 
               Paragraph <input type="radio" id="elementParagraph" name="elementType" value="paragraph" v-model="elementType">
             </label>
-            <label for="elementImage" class="primaryButton" :class="{activeType: elementType == 'image'}"> 
+
+            <label for="elementImage" class="primaryButton typeButton-image" :class="{activeType: elementType == 'image'}"> 
               Image <input type="radio" id="elementImage" name="elementType" value="image" v-model="elementType">
             </label>
           </div>
 
           <div v-if="element.type == 'singlelineText'" class="staticInput">
-            <h3><label for="singleLineTextInput">Input text: </label></h3>
-            <input id="singleLineTextInput" class="textInput" type="text" v-model="staticContent" placeholder="Write single line text here..."/>
+            <h3 class="sectionTitle">
+              <label for="singleLineTextInput">Input text: </label>
+            </h3>
+            <input id="singleLineTextInput" type="text" v-model="staticContent" placeholder="Write single line text here..."/>
           </div>
+
           <div v-if="element.type == 'paragraph'" class="staticInput">
-            <h3><label for="paragraphInput">Input text: </label></h3>
-            <textarea id="paragraphInput" class="paragraphInput" v-model="staticContent" placeholder="Write your paragraph here..."></textarea>
+            <h3 class="sectionTitle">
+              <label for="paragraphInput">Input text: </label>
+            </h3>
+            <textarea id="paragraphInput" v-model="staticContent" placeholder="Write your paragraph here..."></textarea>
           </div>
+          
           <div v-if="element.type == 'image'" class="staticInput">
-            <h3><label for="imageURLInput">Image URL: </label></h3>
-            <textarea id="imageURLInput" class="paragraphInput" v-model="staticContent" placeholder="Insert link to an image here..."></textarea>
+            <h3 class="sectionTitle">
+              <label for="imageURLInput">Image URL: </label>
+            </h3>
+            <textarea id="imageURLInput" v-model="staticContent" placeholder="Insert link to an image here..."></textarea>
           </div>
         </div>
         <div v-else class="variableDropdown">
@@ -387,26 +397,10 @@ export default {
 
 .activeType{
   color: $primaryColor;
-  border: none;
-  background: $blueHighlight !important;
-}
-
-.sectionTitle{
-  margin-top: 1rem;
-  margin-bottom: 0.25rem;
-}
-
-.changeName{
-  font-size: 16px;
   font-weight: 500;
 
-  padding: 0 0 0 0.25rem;
-
-  background-color: transparent;
-
-  &:focus{
-    background-color: $secondaryColor;
-  }
+  border: none;
+  background-color: $blueHighlight !important;
 }
 
 .positionData{
@@ -451,9 +445,12 @@ export default {
       font-size: 14px;
       font-weight: bold;
 
-      outline: none;
+      padding: 0;
+
+      border-radius: 0;
       border: none;
       border-bottom: 1px solid black ;
+      
       background: none;
     }
   }
@@ -464,13 +461,18 @@ export default {
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
 
-  label{
+  .primaryButton{
     @include flex(row, center, center);
-    padding: 0;
+
+    flex: 1;
     padding: 0.25rem 0;
 
     & > input{
       display: none !important;
+    }
+
+    &.typeButton-paragraph {
+      padding: 0.25rem 0.5rem;
     }
   }
 }

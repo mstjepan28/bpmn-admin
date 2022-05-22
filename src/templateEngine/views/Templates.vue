@@ -192,7 +192,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 
 .heading{
   display: flex;
@@ -207,7 +207,7 @@ export default {
 }
 
 .createTemplateLink{
-  color: rgba(0, 0, 0, 0.87)
+  color: rgba(0, 0, 0, 0.87) !important;
 }
 
 td button{
