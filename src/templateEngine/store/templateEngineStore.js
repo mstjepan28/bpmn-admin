@@ -2,7 +2,8 @@ export default {
   state: {
     modalRef: {
       variableModal: null,
-      templateNameModal: null
+      templateNameModal: null,
+      responsePopup: null,
     },
     
     updatedVariable: null

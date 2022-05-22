@@ -3,6 +3,10 @@
   <Modal id="variableModal" ref="variableModal">
     <VariableEdit/>
   </Modal>
+
+  <ResponsePopup
+    ref="responsePopup"
+  />
   
   <PdfBuilder
     v-if="template"
@@ -15,12 +19,13 @@
 <script>
 import axios from "axios";
 
+import ResponsePopup from "../components/ResponsePopup.vue";
 import Modal from "../components/Modal.vue";
 import VariableEdit from "../components/VariableEdit.vue";
 import PdfBuilder from "../components/PdfBuilder.vue";
 
 export default {
-  components: { VariableEdit, Modal, PdfBuilder },
+  components: { ResponsePopup, VariableEdit, Modal, PdfBuilder },
 
   data(){
     return{
@@ -45,12 +50,20 @@ export default {
         ref: this.$refs.variableModal,
       });
     },
+
+    setResponsePopupRef(){
+      this.$store.commit("setModalRef", {
+        name: "responsePopup",
+        ref: this.$refs.responsePopup,
+      });
+    }
   },
   async mounted(){
     const templateId = this.$route.params.templateId;
     await this.fetchTemplateById(templateId);
 
     this.setVariableModalRef();
+    this.setResponsePopupRef();
   }
 }
 </script>

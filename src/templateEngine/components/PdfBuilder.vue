@@ -1,9 +1,5 @@
 <template>
   <div class="componentContainer">
-    <ResponsePopup
-      ref="responsePopup"
-    />
-
     <div class="colContent leftCol">
       <button 
         class="primaryButton drawingToggleButton" 
@@ -76,7 +72,6 @@ import axios from "axios";
 import EditElement   from "./EditElement.vue";
 import SaveTemplateButton from "./SaveTemplateButton.vue";
 import PdfToImage    from "./PdfToImage.vue";
-import ResponsePopup from "./ResponsePopup.vue";
 import ToggleSwitch from "./ToggleSwitch.vue";
 import VariableList from "./VariableList.vue";
 
@@ -91,7 +86,7 @@ export default {
       required: false
     }
   },
-  components: { EditElement, PdfToImage, ResponsePopup, ToggleSwitch, SaveTemplateButton, VariableList },
+  components: { EditElement, PdfToImage, ToggleSwitch, SaveTemplateButton, VariableList },
   data(){
     return{
       pdfTemplate: null, // dom element 
@@ -459,7 +454,8 @@ export default {
       },
 
       openResponsePopup(resultStatus, customMsg=null){
-        this.$refs.responsePopup.setResponseData(resultStatus, customMsg);
+        const popup = this.$store.getters.getModalRefByName("responsePopup");
+        popup.setResponseData(resultStatus, customMsg);
       },
 
       modifyPositionData(modifyBy){
@@ -547,10 +543,6 @@ export default {
           }, [])
         }
         return parseInt(stringValue.match(/\d*/g).join("")) || 0
-      },
-
-      togglePopup(){
-        this.$refs.responsePopup.openPopup();
       },
       
       calcPositionData(positionData){
