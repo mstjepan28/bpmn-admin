@@ -109,7 +109,6 @@ export default {
         id: null,
         pdfDimensions: null,
         name: "New template",
-        tags: [],
         selectionList: [],
         variableList: []
       }
