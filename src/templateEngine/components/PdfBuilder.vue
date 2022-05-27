@@ -194,33 +194,35 @@ export default {
       resizeHandler(event){
         const target = event.target;
 
-        if(target.classList.contains("pdfTemplate")) return;
-
         // Get the previous coordinates of the object
-        let x = (parseInt(target.getAttribute('data-x')) || 0)
-        let y = (parseInt(target.getAttribute('data-y')) || 0)
-
-        // update the element's style
-        const width = parseInt(event.rect.width);
-        const height = parseInt(event.rect.height);
-
-        this.updatePositionData(target, { width, height })
-
-        target.style.width = width + 'px';
-        target.style.height = height + 'px';
+        let x = (parseFloat(target.getAttribute('data-x')) || 0)
+        let y = (parseFloat(target.getAttribute('data-y')) || 0)
 
         // translate when resizing from top or left edges
-        x += parseInt(event.deltaRect.left)
-        y += parseInt(event.deltaRect.top)
+        x += event.deltaRect.left;
+        y += event.deltaRect.top;
+        
+        let width = event.rect.width;
+        let height = event.rect.height;
+
+        target.style.width = `${width}px`;
+        target.style.height = `${height}px`;
 
         target.style.transform = `translate(${x}px, ${y}px)`;
-        this.updatePositionData(target, {x, y})
+        
+        this.updatePositionData(target, {
+          x: parseInt(x), 
+          y: parseInt(y), 
+          width: parseInt(width), 
+          height: parseInt(height)
+        })
 
         target.setAttribute('data-x', x);
         target.setAttribute('data-y', y);
       },
 
       /* ------------------------------------------------------------ */
+
       disableDrawing(){
         if(this.selectionCreation.selection)
           this.selectionCreation.selection.remove();
@@ -238,7 +240,9 @@ export default {
 
       drawSelection(){
         // TODO: separate the function into smaller chunks, maybe even separate files(class for drawing?)
-        if(this.selectionCreation.drawHandler) return this.disableDrawing();
+        if(this.selectionCreation.drawHandler) {
+          return this.disableDrawing();
+        }
 
         let drawingStarted = false;
         let positionData = { x: 0, y: 0, width: 0, height: 0 };
@@ -248,19 +252,19 @@ export default {
         const thisRef = this;
 
         /* ------------------------------------------------------------ */
-
-        this.selectionCreation.updateHandler = function (event){
+        function drawSelection(event) {
           let width  = event.offsetX - positionData.x
           let height = event.offsetY - positionData.y
+          const selection = thisRef.selectionCreation.selection;
           
-          thisRef.selectionCreation.selection.style.left = width < 0? `${width}px` : "";
-          thisRef.selectionCreation.selection.style.top = height < 0? `${height}px`: "";
+          selection.style.left = width < 0? `${width}px` : "";
+          selection.style.top = height < 0? `${height}px`: "";
 
           positionData.width = Math.abs(width);
           positionData.height = Math.abs(height);
           
-          thisRef.selectionCreation.selection.style.width  = `${positionData.width}px`;
-          thisRef.selectionCreation.selection.style.height = `${positionData.height}px`;
+          selection.style.width  = `${positionData.width}px`;
+          selection.style.height = `${positionData.height}px`;
         }
 
         this.selectionCreation.drawHandler = function (event){
@@ -272,7 +276,7 @@ export default {
 
             positionData = { x: 0, y: 0, width: 0, height: 0 };
 
-            thisRef.pdfTemplate.removeEventListener("mousemove", thisRef.selectionCreation.updateHandler);
+            thisRef.pdfTemplate.removeEventListener("mousemove", drawSelection);
           }
           else{
             drawingStarted = true;
@@ -282,7 +286,7 @@ export default {
 
             thisRef.selectionCreation.selection = thisRef.createSelection(positionData);
 
-            thisRef.pdfTemplate.addEventListener('mousemove', thisRef.selectionCreation.updateHandler);
+            thisRef.pdfTemplate.addEventListener('mousemove', drawSelection);
           }
         }
           
@@ -544,7 +548,9 @@ export default {
       getNumValue(stringValue, returnArray=false){
         if(returnArray){
           return stringValue.match(/\d*/g).reduce((result, value) => {
-            if(value) result.push(parseInt(value))
+            if(value) {
+              result.push(parseInt(value));
+            }
             return result
           }, [])
         }

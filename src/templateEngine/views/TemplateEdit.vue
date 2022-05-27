@@ -1,6 +1,10 @@
 <template>
 <div class="wrapper">
-  <Modal id="variableModal" ref="variableModal">
+  <Modal 
+    id="variableModal" 
+    header="Edit variable" 
+    ref="variableModal"
+  >
     <VariableEdit/>
   </Modal>
 
