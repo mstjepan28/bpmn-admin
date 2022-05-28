@@ -80,19 +80,28 @@ export default {
       }
     },
 
+    toggleBodyScroll() {
+      const htmlElement = document.querySelector("html");
+      htmlElement.style.overflow = this.isModalOpen ? "hidden" : "";
+    },
+
     openModal(modalData, customMessage=null, customStyle=null) {
+      this.isModalOpen = true;
       this.providerData.data = modalData;
       this.providerData.message = customMessage;
       this.providerData.style = customStyle;
 
-      this.isModalOpen = true;
+      this.toggleBodyScroll();
+
       document.getElementById(this.id).style.display = "block";
     },
 
     closeModal() {
-      this.resetData();
-
       this.isModalOpen = false;
+
+      this.resetData();
+      this.toggleBodyScroll();
+      
       document.getElementById(this.id).style.display = "none";
     },
 
