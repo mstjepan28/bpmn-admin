@@ -1,4 +1,4 @@
-@mixin button(){
+@mixin button($buttonColor) {
   padding: 0.25rem 1rem;
 
   cursor: pointer;
@@ -11,7 +11,13 @@
   &:hover, &:focus {
     color: $primaryColor;
     font-weight: 500;
-    background-color: $blueHighlight;
+    background-color: $buttonColor;
+  }
+  &:disabled {
+    cursor: initial;
+    color: $primaryColor;
+    font-weight: initial;
+    background-color: $highlightColor;
   }
 }
 

@@ -10,6 +10,23 @@
         <input type="checkbox" @change="toggleSelectAll" :checked="isAllSelected">
         {{selectAllLabel}}
       </label>
+
+      <button 
+        type="button" 
+        class="primaryButton-red"
+        :disabled="!isAnySelected"
+        @click="deleteSelectedFiles"
+      >
+        Delete
+      </button>
+      <button 
+        type="button" 
+        class="primaryButton"
+        :disabled="!isAnySelected"
+        @click="downloadSelectedFiles"
+      >
+        Download
+      </button>
     </div>
 
     <div class="fileList">
@@ -83,8 +100,19 @@ export default {
     selectAllLabel() {
       return this.isAllSelected ? "Deselect all" : "Select all";
     },
+    isAnySelected() {
+      return this.selectedFilesList.length > 0;
+    }
   },
   methods: {
+    deleteSelectedFiles() {
+      console.log("deleteSelectedFiles", this.selectedFilesList);
+    },
+
+    downloadSelectedFiles() {
+      console.log("downloadSelectedFiles", this.selectedFilesList);
+    },
+
     isFileSelected(fileId) {
       return !!this.selectedFilesList.filter(file => file.id === fileId).length;
     },
@@ -123,7 +151,6 @@ export default {
 .fileActions {
   display: flex;
   align-items: center;
-  justify-content: space-between;
 
   margin: 0.25rem 0 1.25rem 0.75rem;
 
@@ -131,6 +158,8 @@ export default {
     display: flex;
     align-items: center;
     column-gap: 0.75rem;
+
+    margin-right: auto;
 
     white-space: nowrap;
     
@@ -140,6 +169,10 @@ export default {
       height: $checkbox-size;
 
     }
+  }
+
+  button:first-of-type {
+    margin-right: 0.5rem;
   }
 }
 

@@ -39,7 +39,11 @@ h3 {
 }
 
 .primaryButton{
-  @include button();
+  @include button($blueHighlight);
+}
+
+.primaryButton-red {
+  @include button($redHighlight);
 }
 
 .sectionTitle{
