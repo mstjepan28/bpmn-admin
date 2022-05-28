@@ -1,5 +1,14 @@
 <template>
   <div>
+    <Modal
+      id="pdfFileModal"
+      ref="pdfFileModal"
+      header="Template files"
+      forceShow
+    >
+      <PdfFileManager />
+    </Modal>
+    
     <div class="heading">
       <h1>PDF Templates</h1>
       <h2>
@@ -37,6 +46,9 @@
           <th class="text-left">
             Delete template
           </th>
+          <th class="text-left">
+            PDF files
+          </th>
         </tr>
       </thead>
 
@@ -64,6 +76,10 @@
               <button type="button" @click="selectToDelete(template.id)">Delete</button>
             </span>
           </td>
+
+          <td>
+            <button type="button" @click="openFileModal(template.id)">Show</button>
+          </td>
         </tr>
       </tbody>
     </v-simple-table>
@@ -81,9 +97,13 @@
 import axios from "axios";
 import dayjs from "dayjs";
 
+import Modal from "../components/Modal.vue";
+import PdfFileManager from "../components/PdfFileManager.vue";
+
 import { fuzzySearch } from "../util/fuzzySearch";
 
 export default {
+  components: { Modal, PdfFileManager },
   data () {
     return {
       selectedTemplate: null,
@@ -99,6 +119,10 @@ export default {
     }
   },
   methods: {
+    openFileModal(templateId) {
+      this.$refs.pdfFileModal.openModal(templateId)
+    },
+
     formateDateTime(timestamp) {
       return dayjs(timestamp).format('YYYY-MM-DD HH:mm:ss');
     },
