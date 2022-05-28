@@ -11,7 +11,7 @@
   >
 
   <h3 class="file-name">
-    {{fileData.name}}
+    {{file}}
   </h3>
 </label>
 </template>
@@ -20,8 +20,8 @@
 
 export default {
   props: {
-    fileData: {
-      type: Object,
+    file: {
+      type: String,
       required: true
     },
     selected: {
@@ -39,10 +39,10 @@ export default {
       this.isSelected = !this.isSelected;
 
       if(this.isSelected) {
-        this.$emit('fileSelected', this.fileData);
+        this.$emit('fileSelected', this.file);
       }
       else {
-        this.$emit('fileDeselected', this.fileData.id);
+        this.$emit('fileDeselected', this.file);
       }
     }
   },

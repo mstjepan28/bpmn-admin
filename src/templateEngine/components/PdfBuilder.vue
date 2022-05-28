@@ -601,7 +601,7 @@ export default {
 
       async setBackgroundImage(templateId){
         const dummyData = `?dummy=${Math.random()}`; // used to force browser to reload image
-        const imageUrl = `${this.apiUrl}/public/templates/${templateId}/background.png/${dummyData}`
+        const imageUrl = `${this.apiUrl}/public/${templateId}/background.png/${dummyData}`
 
         // TODO: fix this so it doesn't log an error when the image is not found
         try{

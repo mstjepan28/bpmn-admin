@@ -31,10 +31,10 @@
 
     <div class="fileList">
       <PdfFileInstance 
-        :key="file.id"
-        :fileData="file"
+        :key="file"
+        :file="file"
         v-for="file in fileList"
-        :selected="isFileSelected(file.id)"
+        :selected="isFileSelected(file)"
         @fileSelected="fileSelected"
         @fileDeselected="fileDeselected"
       />
@@ -48,49 +48,20 @@
 </template>
 
 <script>
+import axios from "axios";
 import PdfFileInstance from "./PdfFileInstance";
 
 export default {
+  props: {
+    baseUrl: {
+      type: String,
+      required: true
+    }
+  },
   components: { PdfFileInstance },
   data() {
     return {
-      fileList: [
-        {
-          id: 1,
-          name: "file1",
-          created_by: "user1",
-          created_at: "2020-01-01",
-          updated_at: "2020-01-01"
-        },
-        {
-          id: 2,
-          name: "file2",
-          created_by: "user2",
-          created_at: "2020-01-01",
-          updated_at: "2020-01-01"
-        },
-        {
-          id: 3,
-          name: "file3",
-          created_by: "user3",
-          created_at: "2020-01-01",
-          updated_at: "2020-01-01"
-        },
-        {
-          id: 4,
-          name: "file4",
-          created_by: "user4",
-          created_at: "2020-01-01",
-          updated_at: "2020-01-01"
-        },
-        {
-          id: 5,
-          name: "file5",
-          created_by: "user5",
-          created_at: "2020-01-01",
-          updated_at: "2020-01-01"
-        }
-      ],
+      fileList: [],
       selectedFilesList: [],
 
       isAllSelected: false,
@@ -102,9 +73,26 @@ export default {
     },
     isAnySelected() {
       return this.selectedFilesList.length > 0;
+    },
+    templateId() {
+      return this.data.providerData.data.templateId
     }
   },
   methods: {
+    async fetchFiles() {
+      if(!this.templateId) {
+        return;
+      }
+
+      try{
+        const res = await axios.get(`${this.baseUrl}/templates/${this.templateId}/files`);
+        this.fileList = res.data;
+      }catch(e){
+        this.fileList = []
+        console.log(e);
+      }
+    },
+
     deleteSelectedFiles() {
       console.log("deleteSelectedFiles", this.selectedFilesList);
     },
@@ -113,8 +101,8 @@ export default {
       console.log("downloadSelectedFiles", this.selectedFilesList);
     },
 
-    isFileSelected(fileId) {
-      return !!this.selectedFilesList.filter(file => file.id === fileId).length;
+    isFileSelected(checkFile) {
+      return !!this.selectedFilesList.filter(file => file === checkFile).length;
     },
 
     toggleSelectAll() {
@@ -128,15 +116,23 @@ export default {
       }
     },
 
-    fileSelected(file) {
-      this.selectedFilesList.push(file);
+    fileSelected(selectedFile) {
+      this.selectedFilesList.push(selectedFile);
       this.isAllSelected = this.selectedFilesList.length === this.fileList.length;
     },
-    fileDeselected(fileId) {
-      this.selectedFilesList = this.selectedFilesList.filter(file => file.id !== fileId);
+    fileDeselected(deselectedFile) {
+      this.selectedFilesList = this.selectedFilesList.filter(file => file !== deselectedFile);
       this.isAllSelected = false;
     }
   },
+  inject: {
+    data: "data",
+  },
+  watch: {
+    templateId() {
+      this.fetchFiles();
+    }
+  }
 }
 </script>
 

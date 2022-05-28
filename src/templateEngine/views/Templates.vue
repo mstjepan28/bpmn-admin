@@ -4,9 +4,10 @@
       id="pdfFileModal"
       ref="pdfFileModal"
       header="Template files"
-      forceShow
     >
-      <PdfFileManager />
+      <PdfFileManager 
+        :baseUrl="baseURL"
+      />
     </Modal>
     
     <div class="heading">
@@ -120,7 +121,7 @@ export default {
   },
   methods: {
     openFileModal(templateId) {
-      this.$refs.pdfFileModal.openModal(templateId)
+      this.$refs.pdfFileModal.openModal({templateId})
     },
 
     formateDateTime(timestamp) {
