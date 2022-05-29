@@ -42,14 +42,21 @@
   </div>
   <div v-else class="content empty">
     <h2>No files found</h2>
-    <button type="button" class="primaryButton">Generate new Files</button>
+    <BaseButton 
+      type="button" 
+      class="primaryButton generateButton"
+      text="Generate new Files"
+      :onclick="generateFilesFromTemplate"
+    />
   </div>
 </div>
 </template>
 
 <script>
 import axios from "axios";
+
 import PdfFileInstance from "./PdfFileInstance";
+import BaseButton from "./BaseButton";
 
 export default {
   props: {
@@ -58,7 +65,7 @@ export default {
       required: true
     }
   },
-  components: { PdfFileInstance },
+  components: { PdfFileInstance, BaseButton },
   data() {
     return {
       fileList: [],
@@ -89,6 +96,20 @@ export default {
       wrapperModal.closeModal();
     },
 
+    async generateFilesFromTemplate() {
+      try {
+        const response = await axios.post(`${this.baseUrl}/templates/${this.templateId}/files/generate`);
+        
+        this.fileList = response.data;
+        this.selectedFilesList = [];
+        this.isAllSelected = false;
+
+        this.openResponsePopup("success", "Files generated successfully");
+      }catch(e) {
+        this.openResponsePopup("error", e.message);
+      }
+    },
+
     async fetchFiles() {
       if(!this.templateId) {
         return;
@@ -99,6 +120,7 @@ export default {
       try{
         const res = await axios.get(`${this.baseUrl}/templates/${this.templateId}/files`);
         this.fileList = res.data;
+        this.isAllSelected = false;
       }catch(e){
         this.fileList = []
         console.log(e);
@@ -250,7 +272,7 @@ export default {
     }
 
     button {
-      max-width: fit-content;
+      width: 11rem;
 
       margin: 1rem 0;
       padding: 0.5rem 1rem;
