@@ -84,6 +84,8 @@ export default {
         return;
       }
 
+      this.selectedFilesList = [];
+
       try{
         const res = await axios.get(`${this.baseUrl}/templates/${this.templateId}/files`);
         this.fileList = res.data;
