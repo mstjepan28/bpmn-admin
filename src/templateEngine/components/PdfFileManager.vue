@@ -97,8 +97,35 @@ export default {
       console.log("deleteSelectedFiles", this.selectedFilesList);
     },
 
-    downloadSelectedFiles() {
-      console.log("downloadSelectedFiles", this.selectedFilesList);
+    async downloadSelectedFiles() {
+      if(this.selectedFilesList.length === 0) {
+        return;
+      }
+
+      try{
+        const response = await axios.post(`${this.baseUrl}/templates/${this.templateId}/files`,
+          {
+            fileList: this.selectedFilesList
+          },
+          {
+            responseType: "blob"
+          }
+        );
+
+        const fileName = this.selectedFilesList.length === 1 ? this.selectedFilesList[0] : `${this.templateId}.rar`;
+
+        const blob = new Blob([response.data], { type: "application/octet-stream" });
+
+        const fileLink = document.createElement('a');
+        fileLink.href = window.URL.createObjectURL(blob);
+        fileLink.setAttribute('download', fileName);
+
+        document.body.appendChild(fileLink);
+        fileLink.click();
+        document.body.removeChild(fileLink);
+      }catch(e) {
+        console.log(e);
+      }
     },
 
     isFileSelected(checkFile) {
