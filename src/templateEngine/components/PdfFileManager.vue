@@ -95,8 +95,19 @@ export default {
       }
     },
 
-    deleteSelectedFiles() {
-      console.log("deleteSelectedFiles", this.selectedFilesList);
+    async deleteSelectedFiles() {
+      try{
+        await axios.post(`${this.baseUrl}/templates/${this.templateId}/files/remove`,
+          {
+            fileList: this.selectedFilesList
+          }
+        );
+
+        this.fileList = this.fileList.filter(file => !this.selectedFilesList.includes(file));
+        this.selectedFilesList = [];
+      }catch(e){
+        console.log(e);
+      }
     },
 
     async downloadSelectedFiles() {
