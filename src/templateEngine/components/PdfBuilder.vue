@@ -671,6 +671,18 @@ export default {
       updateVariableList(variableList) {
         this.template.variableList = variableList;
       },
+
+      async cleanupFiles() {
+        if(!this.isNewTemplate) {
+          return;
+        }
+
+        try{
+          await axios.delete(`${this.apiUrl}/templates?id=${this.template.id}&isNew=True`);
+        }catch(e) {
+          console.log(e);
+        }
+      }
   },
   async mounted(){
     this.interaction();
@@ -693,6 +705,7 @@ export default {
   beforeDestroy(){
     document.removeEventListener('keydown', this.keyboardSupport);
     document.removeEventListener("click", this.selectElementOnClick);
+    this.cleanupFiles();
   },
 }
 </script>
