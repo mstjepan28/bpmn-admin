@@ -48,27 +48,24 @@ export default {
       }
     },
 
-    setVariableModalRef(){
-      this.$store.commit("setModalRef", {
-        name: "variableModal",
-        ref: this.$refs.variableModal,
+    setModalRefs(refList) {
+      refList.forEach(ref => {
+        this.$store.commit("setModalRef", { name: ref, ref: this.$refs[ref] });
       });
     },
-
-    setResponsePopupRef(){
-      this.$store.commit("setModalRef", {
-        name: "responsePopup",
-        ref: this.$refs.responsePopup,
-      });
+    removeModalRefs() {
+      this.$store.commit("removeModalRefs");
     }
   },
   async mounted(){
     const templateId = this.$route.params.templateId;
     await this.fetchTemplateById(templateId);
 
-    this.setVariableModalRef();
-    this.setResponsePopupRef();
-  }
+    this.setModalRefs(["variableModal", "responsePopup"]);
+  },
+  beforeDestroy() {
+    this.removeModalRefs();
+  },
 }
 </script>
 

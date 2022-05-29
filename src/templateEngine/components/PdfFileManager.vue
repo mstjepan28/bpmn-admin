@@ -79,6 +79,16 @@ export default {
     }
   },
   methods: {
+    openResponsePopup(resultStatus, customMsg=null){
+      const popup = this.$store.getters.getModalRefByName("responsePopup");
+      popup.setResponseData(resultStatus, customMsg);
+    },
+
+    closeWrapperModal() {
+      const wrapperModal = this.$store.getters.getModalRefByName("pdfFileModal");
+      wrapperModal.closeModal();
+    },
+
     async fetchFiles() {
       if(!this.templateId) {
         return;
@@ -105,9 +115,13 @@ export default {
 
         this.fileList = this.fileList.filter(file => !this.selectedFilesList.includes(file));
         this.selectedFilesList = [];
+
+        this.openResponsePopup("success", "Files deleted successfully");
       }catch(e){
         console.log(e);
+        this.openResponsePopup("error", "Error while deleting files");
       }
+      this.closeWrapperModal();
     },
 
     async downloadSelectedFiles() {
@@ -138,7 +152,9 @@ export default {
         document.body.removeChild(fileLink);
       }catch(e) {
         console.log(e);
+        this.openResponsePopup("error", "Error while downloading files");
       }
+      this.closeWrapperModal();
     },
 
     isFileSelected(checkFile) {

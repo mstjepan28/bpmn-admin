@@ -9,6 +9,10 @@
         :baseUrl="baseURL"
       />
     </Modal>
+
+    <ResponsePopup
+      ref="responsePopup"
+    />
     
     <div class="heading">
       <h1>PDF Templates</h1>
@@ -99,12 +103,13 @@ import axios from "axios";
 import dayjs from "dayjs";
 
 import Modal from "../components/Modal.vue";
+import ResponsePopup from "../components/ResponsePopup.vue";
 import PdfFileManager from "../components/PdfFileManager.vue";
 
 import { fuzzySearch } from "../util/fuzzySearch";
 
 export default {
-  components: { Modal, PdfFileManager },
+  components: { Modal, ResponsePopup, PdfFileManager },
   data () {
     return {
       selectedTemplate: null,
@@ -208,12 +213,24 @@ export default {
       }catch(error){
         console.log(error)
       }
+    },
+    
+    setModalRefs(refList) {
+      refList.forEach(ref => {
+        this.$store.commit("setModalRef", { name: ref, ref: this.$refs[ref] });
+      });
+    },
+    removeModalRefs() {
+      this.$store.commit("removeModalRefs");
     }
   },
-
   async mounted(){
     await this.fetchTemplates();
-  }
+    this.setModalRefs(["responsePopup", "pdfFileModal"]);
+  },
+  beforeDestroy() {
+    this.removeModalRefs();
+  },
 }
 </script>
 

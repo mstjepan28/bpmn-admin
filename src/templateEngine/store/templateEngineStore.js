@@ -4,6 +4,7 @@ export default {
       variableModal: null,
       additionalDataModal: null,
       responsePopup: null,
+      pdfFileModal: null,
     },
     
     updatedVariable: null,
@@ -24,6 +25,12 @@ export default {
 
     setUpdateVariable(state, payload) {
       state.updatedVariable = payload;
+    },
+
+    removeModalRefs(state) {
+      Object.keys(state.modalRef).forEach(key => {
+        state.modalRef[key] = null
+      });
     }
   },
 }
