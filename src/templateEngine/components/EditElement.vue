@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div v-if="element">
-        <h2>Element properties:</h2>
+    <div v-if="selection">
+        <h2>Selection properties:</h2>
 
         <h3 class="sectionTitle">Position data</h3>
         <div class="positionData">
@@ -38,43 +38,43 @@
           <ToggleSwitch
             ref="staticToggle"
             :labels="['Static content', 'Static content']" 
-            :isDisabled="!element.isStatic" 
+            :isDisabled="!selection.isStatic" 
             :toggleID="'staticToggle'"
             @toggled="toggleStaticContent"
           />
         </div>
 
-        <div v-if="element.isStatic">
+        <div v-if="selection.isStatic">
           <h3 class="sectionTitle">Data type: </h3>
           <div class="dataTypeSelection">
-            <label for="elementText" class="primaryButton typeButton-text" :class="{activeType: elementType == 'singlelineText'}"> 
-              Text <input type="radio" id="elementText" name="elementType" value="singlelineText" v-model="elementType">
+            <label for="elementText" class="primaryButton typeButton-text" :class="{activeType: selectionType == 'singlelineText'}"> 
+              Text <input type="radio" id="elementText" name="selectionType" value="singlelineText" v-model="selectionType">
             </label>
 
-            <label for="elementParagraph" class="primaryButton typeButton-paragraph" :class="{activeType: elementType == 'paragraph'}"> 
-              Paragraph <input type="radio" id="elementParagraph" name="elementType" value="paragraph" v-model="elementType">
+            <label for="elementParagraph" class="primaryButton typeButton-paragraph" :class="{activeType: selectionType == 'paragraph'}"> 
+              Paragraph <input type="radio" id="elementParagraph" name="selectionType" value="paragraph" v-model="selectionType">
             </label>
 
-            <label for="elementImage" class="primaryButton typeButton-image" :class="{activeType: elementType == 'image'}"> 
-              Image <input type="radio" id="elementImage" name="elementType" value="image" v-model="elementType">
+            <label for="elementImage" class="primaryButton typeButton-image" :class="{activeType: selectionType == 'image'}"> 
+              Image <input type="radio" id="elementImage" name="selectionType" value="image" v-model="selectionType">
             </label>
           </div>
 
-          <div v-if="element.type == 'singlelineText'" class="staticInput">
+          <div v-if="selection.type == 'singlelineText'" class="staticInput">
             <h3 class="sectionTitle">
               <label for="singleLineTextInput">Input text: </label>
             </h3>
             <input id="singleLineTextInput" type="text" v-model="staticContent" placeholder="Write single line text here..."/>
           </div>
 
-          <div v-if="element.type == 'paragraph'" class="staticInput">
+          <div v-if="selection.type == 'paragraph'" class="staticInput">
             <h3 class="sectionTitle">
               <label for="paragraphInput">Input text: </label>
             </h3>
             <textarea id="paragraphInput" v-model="staticContent" placeholder="Write your paragraph here..."></textarea>
           </div>
           
-          <div v-if="element.type == 'image'" class="staticInput">
+          <div v-if="selection.type == 'image'" class="staticInput">
             <h3 class="sectionTitle">
               <label for="imageURLInput">Image URL: </label>
             </h3>
@@ -86,7 +86,7 @@
             <label for="variables">Choose a variable:</label>
           </h3>
 
-          <select id="variables" v-model="element.variable" @change="variableChange">
+          <select id="variables" v-model="selection.variable" @change="variableChange">
             <option 
               :key="variable.value"
               v-for="variable in variableList" 
@@ -122,7 +122,7 @@ export default {
       type: String,
       required: true
     },
-    element: {
+    selection: {
       type: Object,
       required: false
     },
@@ -149,7 +149,7 @@ export default {
       positionData: {},
       
       staticContent: "",
-      elementType: "",
+      selectionType: "",
     }
   },
   computed:{
@@ -178,16 +178,16 @@ export default {
         return;
       }
 
-      const value = this.preview.previewData[this.element.variable];
-      this.element.elementRef.innerText = value || "";
+      const value = this.preview.previewData[this.selection.variable];
+      this.selection.elementRef.innerText = value || "";
     },
 
     // ************************************************************ //
 
-    // If element has class 'draggable' then its draggable
+    // If selection has class 'draggable' then its draggable
     checkIfMovable(){
-      if(!this.element.elementRef) return;
-      const newMovementState = this.element.elementRef.classList.contains("draggable");
+      if(!this.selection.elementRef) return;
+      const newMovementState = this.selection.elementRef.classList.contains("draggable");
 
       // If the movement state has change, trigger the movement button to change its internal state
       if(this.isMovable != newMovementState) 
@@ -196,9 +196,9 @@ export default {
       this.isMovable = newMovementState
     },
     
-    // Add/remove the 'draggable' class from element and in that way toggle its movement
+    // Add/remove the 'draggable' class from selection and in that way toggle its movement
     toggleMovement(){
-      const elemRef = this.element.elementRef;
+      const elemRef = this.selection.elementRef;
       this.isMovable = !this.isMovable;
       
       const toggle ={
@@ -244,15 +244,15 @@ export default {
     },
 
     applyPositionUpdate() {
-      const element = this.element.elementRef;
+      const domElement = this.selection.elementRef;
       let {x, y, width, height} = this.positionData;
 
-      element.style.width = `${width}px`;
-      element.style.height = `${height}px`;
-      element.style.transform = `translate(${x}px, ${y}px)`;
+      domElement.style.width = `${width}px`;
+      domElement.style.height = `${height}px`;
+      domElement.style.transform = `translate(${x}px, ${y}px)`;
   
-      element.dataset.x = x;
-      element.dataset.y = y;
+      domElement.dataset.x = x;
+      domElement.dataset.y = y;
     },
     
     // Update elements position based on the input values
@@ -271,56 +271,62 @@ export default {
     // sets the state of the "Static content" switch
     toggleStaticContent(newElement=null){
       // internal state of the toggle switch
-      const internalState = this.$refs.staticToggle.toggleState;
+      const newIsStatic = this.$refs.staticToggle.toggleState;
 
-      this.element.staticContent = "";
+      this.selection.staticContent = "";
       
       // if this is applied to an image, it destroys the internal component 
-      if(this.element.type != "image" && !this.element.isStatic) this.element.elementRef.innerText = ""; 
+      if(this.selection.type === "image" && this.selection.isStatic) {
+        this.selection.elementRef.innerText = ""
+      }
 
-      if(this.element.isStatic == internalState)
-        return
-      else if(newElement)
+      if(this.selection.isStatic == newIsStatic) {
+        return;
+      }
+      else if(newElement) {
         this.$refs.staticToggle.changeState(true);
-      else
-        this.element.isStatic = internalState;
-          
+        return;
+      }
+      else {
+        this.selection.isStatic = newIsStatic;
+      }
+      
       this.destroyComponent();
-      this.elementTypeImage();
+      this.selectionTypeImage();
     },
 
     updateStaticContent(){
-      this.element.staticContent = this.staticContent;
+      this.selection.staticContent = this.staticContent;
 
-      if(this.elementType == "image") {
-        return this.element.internalComponent.setImageURL(this.staticContent);
+      if(this.selectionType == "image") {
+        return this.selection.internalComponent.setImageURL(this.staticContent);
       }
 
-      this.element.elementRef.innerText = this.staticContent || "";
+      this.selection.elementRef.innerText = this.staticContent || "";
     },
 
     // ************************************************************ //
 
     shouldCreateComponent() {
-      return !this.element.internalComponent && // if there is a component present dont create another one
-      this.element.isStatic && // if its not static, there is not point in the component since the image is handled on the backend
-      this.elementType == "image"
+      return !this.selection.internalComponent && // if there is a component present dont create another one
+      this.selection.isStatic && // if its not static, there is not point in the component since the image is handled on the backend
+      this.selectionType == "image"
     },
 
     shouldDestroyComponent() {
-      return this.element.internalComponent &&
-      this.element.isStatic &&
-      this.elementType != "image"
+      return this.selection.internalComponent &&
+      this.selection.isStatic &&
+      this.selectionType != "image"
     },
 
     // Dynamically create an instance of the ImageUpload component and mount it as a child
-    //  of the selected element
-    elementTypeImage(){
+    //  of the selected selection
+    selectionTypeImage(){
       if(!this.shouldCreateComponent()) {
         return;
       }
       
-      this.createComponent(this.element)
+      this.createComponent(this.selection)
     },
 
     createComponent(selection) {
@@ -339,34 +345,38 @@ export default {
       return imageUploadInstance;
     },
 
-    // Destroy the internal component of the selected element and remove it from the DOM 
+    // Destroy the internal component of the selection and remove it from the DOM 
     destroyComponent(){
-      if(!this.shouldDestroyComponent()) return;
+      if(!this.shouldDestroyComponent()) {
+        return;
+      }
 
-      document.getElementById(this.element.id).remove();
+      document.getElementById(this.selection.id).remove();
       
-      this.element.internalComponent.$destroy();
-      this.element.internalComponent = null;
+      this.selection.internalComponent.$destroy();
+      this.selection.internalComponent = null;
+
+      this.selection.staticContent = "";
     },
 
     // ************************************************************ //
 
     deleteElement(){
-      this.$emit("deleteElement", this.element);
+      this.$emit("deleteElement", this.selection);
     },
   },
   mounted(){
     this.pdfTemplate = document.getElementById("pdfTemplate");
   },
   watch:{
-    element(){
-      if(!this.element) return;
+    selection(){
+      if(!this.selection) return;
 
       this.newElementMounted = true;
       
-      this.elementType = this.element.type;
-      this.staticContent = this.element.staticContent;
-      this.positionData = this.element.positionData;
+      this.selectionType = this.selection.type;
+      this.staticContent = this.selection.staticContent;
+      this.positionData = this.selection.positionData;
 
       setTimeout(() => {
         this.newElementMounted = false;
@@ -376,25 +386,25 @@ export default {
       }, 100)
     },
 
-    elementType(){
-      if(!this.elementType || this.newElementMounted) {
+    selectionType(){
+      if(!this.selectionType || this.newElementMounted) {
         return;
       }
-      if(this.elementType != "image") {
+      if(this.selectionType != "image") {
         this.destroyComponent();
       }
 
       this.staticContent = ""
-      this.element.type = this.elementType;
-      this.element.elementRef.innerText = ""
+      this.selection.type = this.selectionType;
+      this.selection.elementRef.innerText = ""
 
-      const elementTypeHandler = {
-        image: () => this.elementTypeImage(),
-        singlelineText: () => this.element.elementRef.style.wordBreak = "keep-all",
-        paragraph: () => this.element.elementRef.style.wordBreak = "break-all",
+      const typeHandler = {
+        image: () => this.selectionTypeImage(),
+        singlelineText: () => this.selection.elementRef.style.wordBreak = "keep-all",
+        paragraph: () => this.selection.elementRef.style.wordBreak = "break-all",
         "": () => {}, // fallback
       }
-      elementTypeHandler[this.elementType]();
+      typeHandler[this.selectionType]();
     },
 
     staticContent(){

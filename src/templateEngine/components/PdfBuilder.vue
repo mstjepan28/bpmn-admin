@@ -55,7 +55,7 @@
       <EditElement
         ref="editElement"
         :apiUrl="apiUrl" 
-        :element="selectedElement"
+        :selection="selectedElement"
         :minElementSize="minElementSize"
         :variableList="template.variableList"
         :preview="{
