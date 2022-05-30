@@ -135,7 +135,10 @@ export default {
   left: 0;
   z-index: 10;
   
-  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+
+  background-color: rgba(0, 0, 0, 0.125);
 
   .adjustable-width{
     width: auto;
