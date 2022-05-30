@@ -571,7 +571,8 @@ export default {
       },
 
       rebuildElement(instructions, recalcPos) {
-        const calculatedPositionData = recalcPos? this.calcPositionData(instructions.positionData): instructions.positionData;
+        const positionData = instructions.positionData
+        const calculatedPositionData = recalcPos? this.calcPositionData(positionData): positionData;
 
         const selectionDom = this.createSelection(calculatedPositionData);
         selectionDom.style.pointerEvents = "auto";
@@ -580,8 +581,15 @@ export default {
 
         const selection = this.saveNewSelection(selectionDom, calculatedPositionData);
 
+        if(instructions.internalComponent) {
+          const internalComponent = this.$refs.editElement.createComponent(selection);
+          internalComponent.setImageURL(instructions.staticContent);
+        }
+        else {
+          selection.staticContent = instructions.staticContent;
+        }
+
         selection.isStatic = instructions.isStatic;
-        selection.staticContent = instructions.staticContent;
         selection.type = instructions.type;
         selection.variable = instructions.variable;
       },

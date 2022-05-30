@@ -316,15 +316,27 @@ export default {
     // Dynamically create an instance of the ImageUpload component and mount it as a child
     //  of the selected element
     elementTypeImage(){
-      if(!this.shouldCreateComponent()) return;
+      if(!this.shouldCreateComponent()) {
+        return;
+      }
       
+      this.createComponent(this.element)
+    },
+
+    createComponent(selection) {
       const child = document.createElement("div");
-      this.element.elementRef.appendChild(child)
+      selection.elementRef.appendChild(child)
 
       const imageUploadConstructor = Vue.extend(ImageUpload)
-      const imageUploadInstance = new imageUploadConstructor({ propsData: { id: this.element.id } })
+      const imageUploadInstance = new imageUploadConstructor({ 
+        propsData: { 
+          id: selection.id 
+        } 
+      })
 
-      this.element.internalComponent = imageUploadInstance.$mount(child);
+      selection.internalComponent = imageUploadInstance.$mount(child);
+
+      return imageUploadInstance;
     },
 
     // Destroy the internal component of the selected element and remove it from the DOM 
