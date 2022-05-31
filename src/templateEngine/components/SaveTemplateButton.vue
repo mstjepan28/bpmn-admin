@@ -121,8 +121,9 @@ export default {
     // Get the base64 image from the internal component. If it doesn't exist return the existing static 
     //  content or false
     getStaticContent(selection){
-      if(selection.internalComponent) 
+      if(selection.internalComponent) {
         return selection.internalComponent.getImageSource();
+      }
       
       return selection.variable? false: selection.staticContent
     }

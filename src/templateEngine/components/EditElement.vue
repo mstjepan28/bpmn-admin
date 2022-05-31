@@ -186,7 +186,9 @@ export default {
 
     // If selection has class 'draggable' then its draggable
     checkIfMovable(){
-      if(!this.selection.elementRef) return;
+      if(!this.selection.elementRef) {
+        return;
+      }
       const newMovementState = this.selection.elementRef.classList.contains("draggable");
 
       // If the movement state has change, trigger the movement button to change its internal state
@@ -211,7 +213,9 @@ export default {
     // ************************************************************ //
 
     modifyPositionData(modifyBy){
-      if(!this.isMovable) return;
+      if(!this.isMovable) {
+        return;
+      }
       
       Object.keys(modifyBy).forEach(key => 
         this.positionData[key] += modifyBy[key]
@@ -273,13 +277,6 @@ export default {
       // internal state of the toggle switch
       const newIsStatic = this.$refs.staticToggle.toggleState;
 
-      this.selection.staticContent = "";
-      
-      // if this is applied to an image, it destroys the internal component 
-      if(this.selection.type === "image" && this.selection.isStatic) {
-        this.selection.elementRef.innerText = ""
-      }
-
       if(this.selection.isStatic == newIsStatic) {
         return;
       }
@@ -287,12 +284,24 @@ export default {
         this.$refs.staticToggle.changeState(true);
         return;
       }
-      else {
-        this.selection.isStatic = newIsStatic;
+
+      // because of the internal component image static content has to be handled differently
+      if(this.selection.type === "image") {
+        if(newIsStatic) {
+          this.selectionTypeImage();
+          this.selection.isStatic = true;
+        }
+        else {
+          this.destroyComponent();
+          this.selection.isStatic = false;
+        }
+        
+        return;
       }
-      
-      this.destroyComponent();
-      this.selectionTypeImage();
+
+      this.selection.isStatic = newIsStatic;
+      this.selection.staticContent = "";
+      this.selection.elementRef.innerText = "";
     },
 
     updateStaticContent(){
@@ -307,28 +316,19 @@ export default {
 
     // ************************************************************ //
 
-    shouldCreateComponent() {
-      return !this.selection.internalComponent && // if there is a component present dont create another one
-      this.selection.isStatic && // if its not static, there is not point in the component since the image is handled on the backend
-      this.selectionType == "image"
-    },
-
-    shouldDestroyComponent() {
-      return this.selection.internalComponent &&
-      this.selection.isStatic &&
-      this.selectionType != "image"
-    },
-
     // Dynamically create an instance of the ImageUpload component and mount it as a child
     //  of the selected selection
     selectionTypeImage(){
-      if(!this.shouldCreateComponent()) {
+      // console.log("CREATE COMPONENT: ", !this.selection.internalComponent, this.selectionType === "image")
+      const shouldCreateComponent = !this.selection.internalComponent && this.selectionType === "image";
+      if(!shouldCreateComponent) {
         return;
       }
       
-      this.createComponent(this.selection)
+      this.createComponent(this.selection);
     },
 
+    // separated from selectionTypeImage() so it can be called trough $refs and skip the if statement
     createComponent(selection) {
       const child = document.createElement("div");
       selection.elementRef.appendChild(child)
@@ -347,7 +347,8 @@ export default {
 
     // Destroy the internal component of the selection and remove it from the DOM 
     destroyComponent(){
-      if(!this.shouldDestroyComponent()) {
+      // console.log("DESTROY COMPONENT: ", !!this.selection.internalComponent)
+      if(!this.selection.internalComponent) {
         return;
       }
 
@@ -357,6 +358,7 @@ export default {
       this.selection.internalComponent = null;
 
       this.selection.staticContent = "";
+      this.selection.elementRef.innerText = "";
     },
 
     // ************************************************************ //
