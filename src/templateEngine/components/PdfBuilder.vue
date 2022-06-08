@@ -478,7 +478,7 @@ export default {
       copySelectedElement() {
         if(!this.selectedElement) return;
 
-        this.elementToCopy = JSON.parse(JSON.stringify(this.selectedElement));
+        this.elementToCopy = {...this.selectedElement};
         this.elementToCopy.elementRef = null;
       },
       
@@ -604,22 +604,9 @@ export default {
         this.template.id = this.templateInfo.id;
         this.template.name = this.templateInfo.name;
         this.template.variableList = this.templateInfo.variable_list;
-        this.setBackgroundImage(this.template.id);
-      },
 
-      async setBackgroundImage(templateId){
-        const dummyData = `?dummy=${Math.random()}`; // used to force browser to reload image
-        const imageUrl = `${this.apiUrl}/public/${templateId}/background.png/${dummyData}`
-
-        // TODO: fix this so it doesn't log an error when the image is not found
-        try{
-          const response = await fetch(imageUrl);
-          if(response.ok){
-            this.pdfTemplate.style.backgroundImage = `url(${imageUrl})`;
-          }
-        }catch(error){
-          this.pdfTemplate.style.backgroundImage = "";
-        }
+        const imageUrl = `${this.apiUrl}/public/${this.template.id}/background.png/?dummy=${Math.random()}`;
+        this.pdfTemplate.style.backgroundImage = `url(${imageUrl})`;
       },
 
       async getUUID(){

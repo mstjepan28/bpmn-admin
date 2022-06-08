@@ -46,9 +46,6 @@
     "parserOptions": {
       "parser": "babel-eslint"
     },
-    "ignorePatterns": [
-      "src/pdfBuilder/*"
-    ],
     "rules": {}
   },
   "browserslist": [
