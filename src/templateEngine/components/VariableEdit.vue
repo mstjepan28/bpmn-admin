@@ -9,19 +9,6 @@
         placeholder="Variable name"
         disabled
       />
-      
-      <input
-        type="text"
-        class="variable-input-example"
-        placeholder="Variable example"
-        v-model="variable.example"
-      />
-
-      <textarea 
-        class="variable-input-description"
-        placeholder="Variable description"
-        v-model="variable.description"
-      ></textarea>
     </div>
 
     <div class="variable-type">
@@ -51,6 +38,37 @@
       >
         Image
       </button>
+    </div>
+
+    <div class="variable-input">
+      <div v-if="variable.type === 'singlelineText'">
+        <input
+          type="text"
+          class="variable-input-example"
+          placeholder="Example of a single line of text"
+          v-model="variable.example"
+        />
+      </div>
+      <div v-else-if="variable.type === 'paragraph'">
+        <textarea 
+          class="variable-input-description"
+          placeholder="Example of a paragraph"
+          v-model="variable.example"
+        ></textarea>
+      </div>
+      <div v-else>
+        <textarea 
+          class="variable-input-description"
+          placeholder="Example of an image(url)"
+          v-model="variable.example"
+        ></textarea>  
+      </div>
+
+      <textarea 
+        class="variable-input-description"
+        placeholder="Variable description"
+        v-model="variable.description"
+      ></textarea>
     </div>
 
     <div class="variable-actions">
@@ -140,6 +158,7 @@ export default {
     flex: 1;
 
     padding: 0.25rem;
+    margin-bottom: 1rem;
 
     cursor: pointer;
 

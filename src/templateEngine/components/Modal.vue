@@ -133,7 +133,7 @@ export default {
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 10;
+  z-index: 9999;
   
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
