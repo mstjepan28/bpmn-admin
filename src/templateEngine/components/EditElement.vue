@@ -86,12 +86,18 @@
             <label for="variables">Choose a variable:</label>
           </h3>
 
-          <select id="variables" v-model="selection.variable" @change="variableChange">
+          <select 
+            id="variables"
+            @change="variableChange"
+            :value="selection.variable.name"
+          >
             <option 
-              :key="variable.value"
+              :key="variable.name"
+              :value="variable.name"
               v-for="variable in variableList" 
-              :value="variable.value"
-            >{{variable.name}}</option>
+            >
+              {{variable.name}}
+            </option>
           </select>
         </div>
 
@@ -134,8 +140,8 @@ export default {
       type: Array,
       required: false
     },
-    preview: {
-      type: Object,
+    previewEnabled: {
+      type: Boolean,
       required: false
     }
   },
@@ -173,13 +179,22 @@ export default {
     /* ------------------------------------------------------------ */
   },
   methods:{
-    variableChange() {
-      if(!this.preview.enabled) {
-        return;
-      }
+    variableChange(event) {
+      const varName = event.target.value
+      const variable = this.variableList.find(_variable => _variable.name === varName);
 
-      const value = this.preview.previewData[this.selection.variable];
-      this.selection.elementRef.innerText = value || "";
+      this.selection.variable = {...variable};
+
+      if(this.previewEnabled) {
+        const previewValue = this.selection.variable.example;
+
+        if(this.selection.variable.type === "image") {
+          this.setImagePreview(this.selection, previewValue);
+        }
+        else {
+          this.selection.elementRef.innerText = previewValue || "";
+        }
+      }
     },
 
     // ************************************************************ //
@@ -299,6 +314,10 @@ export default {
         return;
       }
 
+      if(!newIsStatic && !this.selection.variable) {
+        this.selection.variable = {...this.variableList[0]};
+      }
+
       this.selection.isStatic = newIsStatic;
       this.selection.staticContent = "";
       this.selection.elementRef.innerText = "";
@@ -315,6 +334,11 @@ export default {
     },
 
     // ************************************************************ //
+
+    setImagePreview(selection, previewValue) {
+      selection.elementRef.innerText = previewValue? `url(${previewValue})`: "";
+      //selection.elementRef.style.backgroundImage = previewValue? `url(${previewValue})`: "";
+    },
 
     // Dynamically create an instance of the ImageUpload component and mount it as a child
     //  of the selected selection
@@ -372,7 +396,9 @@ export default {
   },
   watch:{
     selection(){
-      if(!this.selection) return;
+      if(!this.selection) {
+        return;
+      }
 
       this.newElementMounted = true;
       
@@ -502,20 +528,21 @@ export default {
 }
 
 .variableDropdown{
-  select{
+  select {
     width: 100%;
 
-    font-size: 16px;
-    font-weight: bold;
-
-    padding: 0.25rem;
+    padding: 0.25rem 0.5rem;
 
     border-radius: 8px;
-    border: none;
-    background: $secondaryColor;
-    
-    &>option:hover{
-      background: $secondaryColor;
+    border: 1px solid $blueHighlight;
+    background-color: $primaryColor;
+
+    &:hover, &:focus {
+      color: $primaryColor;
+      font-weight: bold;
+
+      outline: none;
+      background-color: $blueHighlight;
     }
   }
 }

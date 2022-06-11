@@ -127,7 +127,7 @@ $animationDuration: 0.4s;
 
   position: absolute;
   left: 20px;
-  z-index: 10;
+  z-index: 9999;
 
   overflow: hidden;
 

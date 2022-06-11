@@ -58,10 +58,7 @@
         :selection="selectedElement"
         :minElementSize="minElementSize"
         :variableList="template.variableList"
-        :preview="{
-            previewData,
-            enabled: showContentPreview
-        }"
+        :previewEnabled="showContentPreview"
         @deleteElement="updateList"
         @openResponse="openResponsePopup"
       />
@@ -102,7 +99,6 @@ export default {
           selection: null, // selection currently being drawn
       },
 
-      previewData: null, // data to be displayed in the preview
       showContentPreview: false, // show the preview or not
 
       elementToCopy: null, // dom element to be copied
@@ -619,38 +615,24 @@ export default {
         }
       },
 
-      async getPreviewData() {
-        try{
-          const response = await axios.get(`${this.apiUrl}/previewData`);
-          return response.data;
-        }catch(error){
-          const status = error.message == "Network Error"? 408: 500;
-          this.openResponsePopup(status);
-
-          return {};
-        }
-      },
-
-      setPreviewData(preview) {
-        for(let selection of this.template.selectionList){
-          if(selection.isStatic) continue; // don't display static content - it would overwrite user input 
-
-          const previewValue = preview[selection.variable] || "";
-
-          // TODO: make preview of images
-          if(selection.type == 'image') {
-            continue;
-          }
-          selection.elementRef.innerHTML = previewValue;
-          selection.staticContent = previewValue;
-        }
-      },
-
       async toggleContentPreview() {
         this.showContentPreview = !this.showContentPreview;
 
-        const preview = this.showContentPreview?  this.previewData: {};
-        this.setPreviewData(preview);
+        for(let selection of this.template.selectionList){
+          if(selection.isStatic) {
+            continue; // only variables have preview
+          }
+          
+          const previewValue = this.showContentPreview? selection.variable.example: "";
+
+          // TODO: make preview of images
+          if(selection.type === 'image') {
+            this.$refs.editElement.setImagePreview(previewValue);
+            continue;
+          }
+
+          selection.elementRef.innerText = previewValue;
+        }
       },
 
       handleTemplateSave(processedTemplate) {
@@ -681,7 +663,6 @@ export default {
   },
   async mounted(){
     this.interaction();
-    this.previewData = await this.getPreviewData();
 
     this.pdfTemplate = document.getElementById("pdfTemplate");
 

@@ -64,7 +64,9 @@ export default {
       
       this.variableList.unshift({
         name: variable,
-        type: 'singlelineText'
+        type: 'singlelineText',
+        example: "",
+        description: ""
       })
 
       this.newVariable = "";
