@@ -30,7 +30,16 @@
       @input="searchTemplates"
     ></v-text-field>
 
-    <v-simple-table v-if="templateListFiltered.length >= 1">
+    <v-simple-table v-if="isLoading" class="loading">
+      <h2>Loading templates</h2>
+      <LoadingIndicator
+        id="templateLoading"
+        size="100px"
+        thickness="10px"
+      />
+    </v-simple-table>
+
+    <v-simple-table v-else-if="templateListFiltered.length >= 1">
       <thead>
         <tr>
           <th class="text-left">
@@ -105,13 +114,15 @@ import dayjs from "dayjs";
 import Modal from "../components/Modal.vue";
 import ResponsePopup from "../components/ResponsePopup.vue";
 import PdfFileManager from "../components/PdfFileManager.vue";
+import LoadingIndicator from "../components/LoadingIndicator.vue";
 
 import { fuzzySearch } from "../util/fuzzySearch";
 
 export default {
-  components: { Modal, ResponsePopup, PdfFileManager },
+  components: { Modal, LoadingIndicator, ResponsePopup, PdfFileManager },
   data () {
     return {
+      isLoading: true,
       selectedTemplate: null,
       baseURL: 'http://localhost:5500',
       templateList: [],
@@ -204,6 +215,7 @@ export default {
     },
 
     async fetchTemplates() {
+
       try{
         const response = await axios.get(`${this.baseURL}/templates`);
         this.templateList = response.data;
@@ -213,6 +225,8 @@ export default {
       }catch(error){
         console.log(error)
       }
+
+      this.isLoading = false;
     },
     
     setModalRefs(refList) {
@@ -246,6 +260,11 @@ export default {
   button{
     font-weight: bold;
   }
+}
+
+.loading{
+  text-align: center;
+  margin: 2rem auto;
 }
 
 .createTemplateLink{
