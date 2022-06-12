@@ -41,7 +41,7 @@ export default {
   methods:{
     async fetchTemplateById(templateId){
       try{
-        const response = await axios.get(`${this.baseURL}/templates?id=${templateId}`);
+        const response = await axios.get(`${this.baseURL}/template?id=${templateId}`);
         this.template = response.data;
       }catch(error){
         console.log(error)

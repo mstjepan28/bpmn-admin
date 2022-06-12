@@ -666,7 +666,7 @@ export default {
         }
 
         try{
-          await axios.delete(`${this.apiUrl}/templates?id=${this.template.id}&isNew=True`);
+          await axios.delete(`${this.apiUrl}/template?id=${this.template.id}&isNew=True`);
         }catch(e) {
           console.log(e);
         }

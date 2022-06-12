@@ -98,7 +98,7 @@ export default {
 
     async generateFilesFromTemplate() {
       try {
-        const response = await axios.post(`${this.baseUrl}/templates/${this.templateId}/files/generate`);
+        const response = await axios.post(`${this.baseUrl}/template/${this.templateId}/file/generate`);
         
         this.fileList = response.data;
         this.selectedFilesList = [];
@@ -118,7 +118,7 @@ export default {
       this.selectedFilesList = [];
 
       try{
-        const res = await axios.get(`${this.baseUrl}/templates/${this.templateId}/files`);
+        const res = await axios.get(`${this.baseUrl}/template/${this.templateId}/file`);
         this.fileList = res.data;
         this.isAllSelected = false;
       }catch(e){
@@ -129,7 +129,7 @@ export default {
 
     async deleteSelectedFiles() {
       try{
-        await axios.post(`${this.baseUrl}/templates/${this.templateId}/files/remove`,
+        await axios.post(`${this.baseUrl}/template/${this.templateId}/file/remove`,
           {
             fileList: this.selectedFilesList
           }
@@ -152,7 +152,7 @@ export default {
       }
 
       try{
-        const response = await axios.post(`${this.baseUrl}/templates/${this.templateId}/files`,
+        const response = await axios.post(`${this.baseUrl}/template/${this.templateId}/file`,
           {
             fileList: this.selectedFilesList
           },

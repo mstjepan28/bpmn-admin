@@ -32,7 +32,7 @@ export default {
   methods:{
     async createTemplate(data) {
       try{
-        const response = await axios.post(`${this.apiUrl}/templates`, data, {
+        const response = await axios.post(`${this.apiUrl}/template`, data, {
           header : {'Content-Type': `multipart/form-data; boundary=${data._boundary}`}
         });
         
@@ -46,7 +46,7 @@ export default {
 
     async updateTemplate(data) {
       try{
-        const response = await axios.put(`${this.apiUrl}/templates`, data, {
+        const response = await axios.put(`${this.apiUrl}/template`, data, {
           header : {'Content-Type': `multipart/form-data; boundary=${data._boundary}`}
         });
         

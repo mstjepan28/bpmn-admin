@@ -158,7 +158,7 @@ export default {
 
     async deleteTemplate(){
       try{
-        await axios.delete(`${this.baseURL}/templates?id=${this.selectedTemplate}`);
+        await axios.delete(`${this.baseURL}/template?id=${this.selectedTemplate}`);
 
         this.templateList = this.templateList.filter(template => template.id !== this.selectedTemplate);
         this.selectedTemplate = null;
@@ -217,7 +217,7 @@ export default {
     async fetchTemplates() {
 
       try{
-        const response = await axios.get(`${this.baseURL}/templates`);
+        const response = await axios.get(`${this.baseURL}/template`);
         this.templateList = response.data;
 
         this.sortTemplates('updated_at');
