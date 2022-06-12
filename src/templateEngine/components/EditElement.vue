@@ -321,6 +321,7 @@ export default {
       this.selection.isStatic = newIsStatic;
       this.selection.staticContent = "";
       this.selection.elementRef.innerText = "";
+      this.selection.elementRef.style.backgroundImage = "";
     },
 
     updateStaticContent(){
@@ -336,8 +337,8 @@ export default {
     // ************************************************************ //
 
     setImagePreview(selection, previewValue) {
-      selection.elementRef.innerText = previewValue? `url(${previewValue})`: "";
-      //selection.elementRef.style.backgroundImage = previewValue? `url(${previewValue})`: "";
+      selection.elementRef.style.backgroundImage = previewValue? `url(${previewValue})`: "";
+      selection.elementRef.style.backgroundSize = "cover";
     },
 
     // Dynamically create an instance of the ImageUpload component and mount it as a child
@@ -436,6 +437,9 @@ export default {
     },
 
     staticContent(){
+      if(this.newElementMounted) {
+        return;
+      }
       this.updateStaticContent();
     }
   },

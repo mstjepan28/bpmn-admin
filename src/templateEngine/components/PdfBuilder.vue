@@ -34,7 +34,10 @@
         :labels="['Preview enabled', 'Preview disabled']" 
         :isDisabled="!showContentPreview" 
         :toggleID="'previewToggle'"
-        @toggled="toggleContentPreview"
+        @toggled="() => {
+          showContentPreview = !showContentPreview;
+          toggleContentPreview()
+        }"
       />
 
       <VariableList
@@ -581,8 +584,9 @@ export default {
           const internalComponent = this.$refs.editElement.createComponent(selection);
           internalComponent.setImageURL(instructions.staticContent);
         }
-        else {
+        else if(instructions.staticContent) {
           selection.staticContent = instructions.staticContent;
+          selection.elementRef.innerText = instructions.staticContent;
         }
 
         selection.isStatic = instructions.isStatic;
@@ -616,8 +620,6 @@ export default {
       },
 
       async toggleContentPreview() {
-        this.showContentPreview = !this.showContentPreview;
-
         for(let selection of this.template.selectionList){
           if(selection.isStatic) {
             continue; // only variables have preview
@@ -625,9 +627,8 @@ export default {
           
           const previewValue = this.showContentPreview? selection.variable.example: "";
 
-          // TODO: make preview of images
-          if(selection.type === 'image') {
-            this.$refs.editElement.setImagePreview(previewValue);
+          if(selection.variable.type === 'image') {
+            this.$refs.editElement.setImagePreview(selection, previewValue);
             continue;
           }
 
@@ -647,6 +648,16 @@ export default {
 
       updateVariableList(variableList) {
         this.template.variableList = variableList;
+        this.template.selectionList.forEach(selection => {
+          if(selection.isStatic) {
+            return;
+          }
+
+          const variable = this.template.variableList.find(variable => variable.name === selection.variable.name);
+          selection.variable = variable;
+        });
+
+        this.toggleContentPreview();
       },
 
       async cleanupFiles() {
