@@ -124,10 +124,6 @@ import Vue from "vue"
 
 export default {
   props:{
-    apiUrl: {
-      type: String,
-      required: true
-    },
     selection: {
       type: Object,
       required: false

@@ -36,11 +36,11 @@ export default {
           header : {'Content-Type': `multipart/form-data; boundary=${data._boundary}`}
         });
         
-        this.$emit("openResponse", response.status);
+        this.$emit("openResponse", response.status, "Template created successfully.");
         this.$emit("templateSaved", response.data);
       }catch(error){
-        const status = error.message == "Network Error"? 408: 500;
-        this.$emit("openResponse", status);
+        const { data, status } = error.response;
+        this.$emit("openResponse", status, data);
       }
     },
 
@@ -50,10 +50,10 @@ export default {
           header : {'Content-Type': `multipart/form-data; boundary=${data._boundary}`}
         });
         
-        this.$emit("openResponse", response.status);
+        this.$emit("openResponse", response.status, "Template updated successfully.");
       }catch(error){
-        const status = error.message == "Network Error"? 408: 500;
-        this.$emit("openResponse", status);
+        const { data, status } = error.response;
+        this.$emit("openResponse", status, data);
       }
     },
 

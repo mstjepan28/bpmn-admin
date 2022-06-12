@@ -2,6 +2,7 @@
   <div class="componentContainer">
     <div class="colContent leftCol">
       <TemplateNameEdit
+        :apiUrl="apiUrl"
         :template="template"
       />
 
@@ -56,8 +57,7 @@
 
     <div class="colContent rightCol">
       <EditElement
-        ref="editElement"
-        :apiUrl="apiUrl" 
+        ref="editElement" 
         :selection="selectedElement"
         :minElementSize="minElementSize"
         :variableList="template.variableList"
