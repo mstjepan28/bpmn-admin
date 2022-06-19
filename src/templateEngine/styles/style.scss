@@ -21,6 +21,7 @@ input, textarea {
   resize: none;
 
   padding: 0.25rem 0.5rem;
+  font-size: 14px;
 
   border-radius: 5px;
   border: 1px solid $highlightColor;
@@ -29,6 +30,11 @@ input, textarea {
     outline: none;
     border: 1px solid $blueHighlight;
   }
+}
+
+textarea {
+  min-height: 150px;
+  font-size: 12px;
 }
 
 h2 {

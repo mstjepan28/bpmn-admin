@@ -318,6 +318,7 @@ export default {
         newSelection.style.overflow = "hidden";
         newSelection.style.pointerEvents = "none"; // needed when shrinking the selection
         newSelection.style.backgroundColor = "rgba(173,216,230, 0.25)";
+        newSelection.style.fontSize = "12px";
 
         this.pdfTemplate.appendChild(newSelection);
 
@@ -475,9 +476,11 @@ export default {
       },
 
       copySelectedElement() {
-        if(!this.selectedElement) return;
+        if(!this.selectedElement) {
+          return;
+        }
 
-        this.elementToCopy = {...this.selectedElement};
+        this.elementToCopy = JSON.parse(JSON.stringify(this.selectedElement));
         this.elementToCopy.elementRef = null;
       },
       

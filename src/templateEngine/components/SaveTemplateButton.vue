@@ -125,7 +125,7 @@ export default {
         return selection.internalComponent.getImageSource();
       }
       
-      return selection.variable? false: selection.staticContent
+      return selection.staticContent;
     }
   }
 }

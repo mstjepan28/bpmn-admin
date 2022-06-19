@@ -61,23 +61,14 @@
           </div>
 
           <div v-if="selection.type == 'singlelineText'" class="staticInput">
-            <h3 class="sectionTitle">
-              <label for="singleLineTextInput">Input text: </label>
-            </h3>
             <input id="singleLineTextInput" type="text" v-model="staticContent" placeholder="Write single line text here..."/>
           </div>
 
           <div v-if="selection.type == 'paragraph'" class="staticInput">
-            <h3 class="sectionTitle">
-              <label for="paragraphInput">Input text: </label>
-            </h3>
             <textarea id="paragraphInput" v-model="staticContent" placeholder="Write your paragraph here..."></textarea>
           </div>
           
           <div v-if="selection.type == 'image'" class="staticInput">
-            <h3 class="sectionTitle">
-              <label for="imageURLInput">Image URL: </label>
-            </h3>
             <textarea id="imageURLInput" v-model="staticContent" placeholder="Insert link to an image here..."></textarea>
           </div>
         </div>
@@ -180,6 +171,9 @@ export default {
       const variable = this.variableList.find(_variable => _variable.name === varName);
 
       this.selection.variable = {...variable};
+
+      this.setImagePreview(this.selection, "");
+      this.selection.elementRef.innerText = "";
 
       if(this.previewEnabled) {
         const previewValue = this.selection.variable.example;
