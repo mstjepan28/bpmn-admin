@@ -318,6 +318,7 @@ export default {
         newSelection.style.overflow = "hidden";
         newSelection.style.pointerEvents = "none"; // needed when shrinking the selection
         newSelection.style.backgroundColor = "rgba(173,216,230, 0.25)";
+        newSelection.style.fontFamily = "Arial";
         newSelection.style.fontSize = "12px";
 
         this.pdfTemplate.appendChild(newSelection);
