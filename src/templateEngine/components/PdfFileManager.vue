@@ -42,12 +42,6 @@
   </div>
   <div v-else class="content empty">
     <h2>No files found</h2>
-    <BaseButton 
-      type="button" 
-      class="primaryButton generateButton"
-      text="Generate new Files"
-      :onclick="generateFilesFromTemplate"
-    />
   </div>
 </div>
 </template>
@@ -56,7 +50,6 @@
 import axios from "axios";
 
 import PdfFileInstance from "./PdfFileInstance";
-import BaseButton from "./BaseButton";
 
 export default {
   props: {
@@ -65,7 +58,7 @@ export default {
       required: true
     }
   },
-  components: { PdfFileInstance, BaseButton },
+  components: { PdfFileInstance },
   data() {
     return {
       fileList: [],
@@ -94,20 +87,6 @@ export default {
     closeWrapperModal() {
       const wrapperModal = this.$store.getters.getModalRefByName("pdfFileModal");
       wrapperModal.closeModal();
-    },
-
-    async generateFilesFromTemplate() {
-      try {
-        const response = await axios.post(`${this.baseUrl}/template/${this.templateId}/file/generate`);
-        
-        this.fileList = response.data;
-        this.selectedFilesList = [];
-        this.isAllSelected = false;
-
-        this.openResponsePopup("success", "Files generated successfully");
-      }catch(e) {
-        this.openResponsePopup("error", e.message);
-      }
     },
 
     async fetchFiles() {
